@@ -5,6 +5,7 @@
 from __future__ import print_function
 import os
 import difflib
+import shutil
 
 GITDIR = '/home/colin/micropython'
 LIBDIR = '/home/colin/mbed/micropython-lib'
@@ -24,14 +25,11 @@ mbed_lib_files = ('modmachine.c',
                   'modmbed_i.h',
                   'mpconfigport.h',
                   'mphalport.c',
-                  'mphapport.h',
+                  'mphalport.h',
                   'qstrdefsport.h',
                   'unistd.h')
 
 mbed_repl_files = ('main.cpp',)
-
-def joinpath(*steps):
-    return os.path.normpath(os.path.join(*steps))
 
 class MbedSync(object):
     def __init__(self, gitdir, libdir, repldir):
@@ -48,20 +46,20 @@ class MbedSync(object):
                 self.copy(self.gitpath('py',file),
                           self.libpath('py',file))
                 break
-        for ext in extmod_files:
-            self.copy(self.gitpath('extmod',*ext.split('/')),
-                      self.libpath('extmod',*ext.split('/')))
-        for lib in lib_files:
-            self.copy(self.gitpath('lib', *lib.split('/')),
-                      self.libpath('lib', *lib.split('/')))
+        for file in extmod_files:
+            self.copy(self.gitpath('extmod',*file.split('/')),
+                      self.libpath('extmod',*file.split('/')))
+        for file in lib_files:
+            self.copy(self.gitpath('lib', *file.split('/')),
+                      self.libpath('lib', *file.split('/')))
         # mbed-specifics
-        for lib in mbed_lib_files:
-            self.copy(self.gitpath('mbed', *lib.split('/')),
-                      self.libpath(*lib.split('/')))
+        for file in mbed_lib_files:
+            self.copy(self.gitpath('mbed', *file.split('/')),
+                      self.libpath(*file.split('/')))
         # mbed repl
         for file in mbed_repl_files:
-            self.copy(self.gitpath('mbed', *lib.split('/')),
-                      self.replpath(*lib.split('/')))
+            self.copy(self.gitpath('mbed', *file.split('/')),
+                      self.replpath(*file.split('/')))
 
     def gitpath(self, *path):
         return joinpath(self.gitdir, *path)
@@ -75,15 +73,28 @@ class MbedSync(object):
 class MbedDiff(MbedSync):
     def copy(self, apath, bpath):
         if files_equal(apath, bpath):
-            print('===',apath)
+            # print('===',apath)
+            pass
         else:
-            # show_diff(apath, bpath)
-            print('---',apath)
-            print('+++',bpath)
+            # print('---',apath)
+            # print('+++',bpath)
+            show_diff(bpath, apath)
 
 class MbedRdiff(MbedDiff):
     def copy(self, apath, bpath):
         MbedDiff.copy(self, bpath, apath)
+
+class MbedPull(MbedSync):
+    def copy(self, apath, bpath):
+        if not files_equal(apath, bpath):
+            # print('cp %s %s' % (bpath, apath))
+            shutil.copyfile(bpath, apath)
+
+class MbedPush(MbedSync):
+    def copy(self, apath, bpath):
+        if not files_equal(apath, bpath):
+            # print('cp %s %s' % (apath, bpath))
+            shutil.copyfile(apath, bpath)
 
 def show_diff(apath, bpath):
     """Print unified diff of two files."""
@@ -103,6 +114,9 @@ def show_diff(apath, bpath):
                                  apath, bpath)
     for line in delta:
         print(line, end='')
+
+def joinpath(*steps):
+    return os.path.normpath(os.path.join(*steps))
 
 def iterfiles(dir):
     for f in os.listdir(dir):
@@ -124,22 +138,32 @@ def files_equal(aname, bname):
         with open(bname,'rb') as b:
             while True:
                 adata = a.read(4096)
-                if not adata:
-                    break
                 bdata = b.read(4096)
                 if adata != bdata:
+                    return False
+                if not adata:
+                    # Equal if b at EOF too
+                    return not bdata
+                if not bdata:
                     return False
     return True
 
 if __name__=='__main__':
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument('-r','--reverse', action='store_true',
-                    help='Reverse diff')
+    act = ap.add_subparsers(dest='action', metavar='action', help='Action')
+    diff = act.add_parser('diff', help='Show differences')
+    rdiff = act.add_parser('rdiff', help='Show reverse differences')
+    pull = act.add_parser('pull', help='Pull from hg repos into git')
+    push = act.add_parser('push', help='Push from git to hg repos')
     args = ap.parse_args()
-    if args.reverse:
-        cls = MbedRdiff
-    else:
+    if args.action == 'diff':
         cls = MbedDiff
+    elif args.action == 'rdiff':
+        cls = MbedRdiff
+    elif args.action == 'pull':
+        cls = MbedPull
+    elif args.action == 'push':
+        cls = MbedPush
     sync = cls(GITDIR, LIBDIR, REPLDIR)
     sync.run()
