@@ -50,4 +50,28 @@ void mbed_DigitalOut__write(void *self, int value)
   *dout = value;
 }
 
+void *mbed_Serial__create(int tx, int rx)
+{
+  Serial *serial = new Serial((PinName)tx, (PinName)rx);
+  return (void *)serial;
+}
+
+void mbed_Serial__putc(void *self, int c)
+{
+  Serial *serial = (Serial *)self;
+  serial->putc(c);
+}
+
+void mbed_Serial__puts(void *self, const char *str)
+{
+  Serial *serial = (Serial *)self;
+  serial->puts(str);
+}
+
+int mbed_Serial__getc(void *self)
+{
+  Serial *serial = (Serial *)self;
+  return serial->getc();
+}
+
 #endif

@@ -24,3 +24,8 @@
 
 extern void *mbed_DigitalOut__create(int pin);
 extern void mbed_DigitalOut__write(void *self, int value);
+
+extern void *mbed_Serial__create(int tx, int rx);
+extern void mbed_Serial__putc(void *self, int);
+extern void mbed_Serial__puts(void *self, const char *);
+extern int mbed_Serial__getc(void *self);

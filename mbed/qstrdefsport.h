@@ -36,4 +36,9 @@ Q(reset)
 #if MICROPY_PY_MBED
 Q(mbed)
 Q(DigitalOut)
+Q(write)
+Q(Serial)
+Q(putc)
+Q(puts)
+Q(getc)
 #endif
