@@ -42,3 +42,14 @@ Q(putc)
 Q(puts)
 Q(getc)
 #endif
+
+// modpins.cpp
+Q(pins)
+#if defined(TARGET_K64F)
+Q(USBTX)
+Q(USBRX)
+Q(PTA0)
+Q(LED_RED)
+Q(LED_GREEN)
+Q(LED_BLUE)
+#endif
