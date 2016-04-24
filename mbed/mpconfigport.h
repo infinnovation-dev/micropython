@@ -77,6 +77,7 @@
 // Select which mbed features wanted
 #define MICROPY_MBED_DIGITALOUT     1
 #define MICROPY_MBED_SERIAL         1
+#define MICROPY_PY_PINS             1
 
 #define MICROPY_MODULE_FROZEN       (0)
 #define MICROPY_CPYTHON_COMPAT      (0)
