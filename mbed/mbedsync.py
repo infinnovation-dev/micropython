@@ -1,14 +1,40 @@
-#!/usr/bin/python
-#=======================================================================
-#       Manage differences between github and mbed (hg)
-#=======================================================================
+#!/usr/bin/env python
+#
+# The MIT License (MIT)
+#
+# Copyright (c) 2016 Colin Hogben
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+"""
+Manage differences between github and mbed (hg)
+
+Allow viewing differences and synchronisong between git and hg
+repositories, from the perspective of the git repository.
+"""
 from __future__ import print_function
 import os
 import difflib
 import shutil
 
+# Default locations
 GITDIR = '/home/colin/micropython'
-LIBDIR = '/home/colin/mbed/micropython-lib'
+LIBDIR = '/home/colin/mbed/micropython-dev'
 REPLDIR = '/home/colin/mbed/micropython-repl'
 
 extmod_files = ('machine_mem.h',
@@ -23,6 +49,7 @@ mbed_lib_files = ('modmachine.c',
                   'modmbed.c',
                   'modmbed_i.cpp',
                   'modmbed_i.h',
+                  'modpins.cpp',
                   'mpconfigport.h',
                   'mphalport.c',
                   'mphalport.h',
@@ -30,6 +57,12 @@ mbed_lib_files = ('modmachine.c',
                   'unistd.h')
 
 mbed_repl_files = ('main.cpp',)
+
+mbed_gen_files = (('mbedpins.h','mbedpins.h'),
+                  ('qstrdefscond.h','genhdr/qstrdefs.generated.h'),
+                  ('build/genhdr/mpversion.h', 'genhdr/mpversion.h'))
+
+other_lib_files = (('README-mbed.h', 'README.md'))
 
 class MbedSync(object):
     def __init__(self, gitdir, libdir, repldir):
@@ -61,6 +94,11 @@ class MbedSync(object):
             self.copy(self.gitpath('mbed', *file.split('/')),
                       self.replpath(*file.split('/')))
 
+        # other files generated in git dir
+        for afile, bfile in mbed_gen_files:
+            self.a_master(self.gitpath('mbed', *afile.split('/')),
+                          self.libpath(*bfile.split('/')))
+
     def gitpath(self, *path):
         return joinpath(self.gitdir, *path)
 
@@ -80,9 +118,13 @@ class MbedDiff(MbedSync):
             # print('+++',bpath)
             show_diff(bpath, apath)
 
+    a_master = copy
+
 class MbedRdiff(MbedDiff):
     def copy(self, apath, bpath):
         MbedDiff.copy(self, bpath, apath)
+
+    a_master = copy
 
 class MbedPull(MbedSync):
     def copy(self, apath, bpath):
@@ -90,11 +132,16 @@ class MbedPull(MbedSync):
             # print('cp %s %s' % (bpath, apath))
             shutil.copyfile(bpath, apath)
 
+    def a_master(self, apath, pbath):
+        pass
+
 class MbedPush(MbedSync):
     def copy(self, apath, bpath):
         if not files_equal(apath, bpath):
             # print('cp %s %s' % (apath, bpath))
             shutil.copyfile(apath, bpath)
+
+    a_master = copy
 
 def show_diff(apath, bpath):
     """Print unified diff of two files."""
@@ -121,7 +168,7 @@ def joinpath(*steps):
 def iterfiles(dir):
     for f in os.listdir(dir):
         if os.path.isfile(os.path.join(dir, f)):
-            if f.endswith('~'):
+            if f.endswith('~'): # Emacs backup
                 continue
             yield f
 
@@ -151,6 +198,12 @@ def files_equal(aname, bname):
 if __name__=='__main__':
     import argparse
     ap = argparse.ArgumentParser()
+    ap.add_argument('-g','--git-dir', default=GITDIR,
+                    help='Git repo')
+    ap.add_argument('-l','--lib-dir', default=LIBDIR,
+                    help='micropython library hg repo')
+    ap.add_argument('-r','--repl-dir', default=REPLDIR,
+                    help='micropython repl hg repo')
     act = ap.add_subparsers(dest='action', metavar='action', help='Action')
     diff = act.add_parser('diff', help='Show differences')
     rdiff = act.add_parser('rdiff', help='Show reverse differences')
@@ -165,5 +218,5 @@ if __name__=='__main__':
         cls = MbedPull
     elif args.action == 'push':
         cls = MbedPush
-    sync = cls(GITDIR, LIBDIR, REPLDIR)
+    sync = cls(args.git_dir, args.lib_dir, args.repl_dir)
     sync.run()

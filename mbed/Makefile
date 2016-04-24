@@ -2,92 +2,43 @@ include ../py/mkenv.mk
 
 CROSS = 1
 
+# Path to clone of mbedmicro/mbed git repo
+MBED_REPO = $(HOME)/mbed/mbed
+MBED_HAL = $(MBED_REPO)/libraries/mbed/targets/hal
+# Targets to consider when generating mbedpins.h
+PINS_TARGETS = \
+	K64F \
+	KL25Z \
+	LPC1768 \
+	NUCLEO_F401RE \
+
+# PINS_PATH_$(TARGET) is the relative path within the mbed tree
+# where the relevant PinNames.h file can be found.
+# Often related to extra_labels in workspace_tools/targets.py
+PINS_PATH_KL25Z = TARGET_Freescale/TARGET_KLXX/TARGET_KL25Z
+PINS_PATH_K64F = TARGET_Freescale/TARGET_KPSDK_MCUS/TARGET_MCU_K64F/TARGET_FRDM
+PINS_PATH_LPC1768 = TARGET_NXP/TARGET_LPC176X/TARGET_MBED_LPC1768
+PINS_PATH_NUCLEO_F401RE = TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F401RE
+
+mbedpins.h:	makembedpins.py
+	python makembedpins.py -d $(foreach t,$(PINS_TARGETS),$(t):$(MBED_HAL)/$(PINS_PATH_$(t))/PinNames.h) > $@
+
+qstrdefscond.h:	makeqstrcond.py mbedpins.h
+	python makeqstrcond.py \
+		../py/qstrdefs.h \
+		../py/*.c \
+		../extmod/machine_mem.c \
+		../lib/utils/pyexec.c \
+		../lib/mp-readline/readline.c \
+		qstrdefsport.h \
+		modmachine.c \
+		modmbed.c \
+		modpins.cpp \
+		mbedpins.h \
+		> $@
+
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h
 
 # include py core make definitions
 include ../py/py.mk
-
-ifeq ($(CROSS), 1)
-CROSS_COMPILE = arm-none-eabi-
-endif
-
-INC += -I.
-INC += -I..
-INC += -I../lib/mp-readline
-INC += -I../stmhal
-INC += -I$(BUILD)
-
-ifeq ($(CROSS), 1)
-DFU = ../tools/dfu.py
-PYDFU = ../tools/pydfu.py
-CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mabi=aapcs-linux -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -fsingle-precision-constant -Wdouble-promotion
-CFLAGS = $(INC) -Wall -Werror -ansi -std=gnu99 -nostdlib $(CFLAGS_CORTEX_M4) $(COPT)
-else
-CFLAGS = -m32 $(INC) -Wall -Werror -ansi -std=gnu99 $(COPT)
-endif
-
-#Debugging/Optimization
-ifeq ($(DEBUG), 1)
-CFLAGS += -O0 -ggdb
-else
-CFLAGS += -Os -DNDEBUG
-endif
-
-ifeq ($(CROSS), 1)
-LDFLAGS = -nostdlib -T stm32f405.ld -Map=$@.map --cref
-else
-LD = gcc
-LDFLAGS = -m32 -Wl,-Map=$@.map,--cref
-endif
-LIBS =
-
-SRC_MOD = \
-	modmbed.c \
-	modmachine.c \
-	mphalport.c \
-
-SRC_C = \
-	main.c \
-	uart_core.c \
-	uart_extra.c \
-	lib/utils/printf.c \
-	lib/utils/pyexec.c \
-	lib/libc/string0.c \
-	lib/mp-readline/readline.c \
-
-OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
-
-ifeq ($(CROSS), 1)
-all: $(BUILD)/firmware.dfu
-else
-all: $(BUILD)/firmware.elf
-endif
-
-$(BUILD)/firmware.elf: $(OBJ)
-	$(ECHO) "LINK $@"
-	$(Q)$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
-	$(Q)$(SIZE) $@
-
-$(BUILD)/firmware.dfu: $(BUILD)/firmware.elf
-	$(ECHO) "Create $@"
-	$(Q)$(OBJCOPY) -O binary -j .isr_vector -j .text -j .data $^ $(BUILD)/firmware.bin
-	$(Q)$(PYTHON) $(DFU) -b 0x08000000:$(BUILD)/firmware.bin $@
-
-deploy: $(BUILD)/firmware.dfu
-	$(ECHO) "Writing $< to the board"
-	$(Q)$(PYTHON) $(PYDFU) -u $<
-
-# Run emulation build on a POSIX system with suitable terminal settings
-run:
-	stty raw opost -echo
-	build/firmware.elf
-	@echo Resetting terminal...
-# This sleep is useful to spot segfaults
-	sleep 1
-	reset
-
-test: $(BUILD)/firmware.elf
-	$(Q)/bin/echo -e "print('hello world!', list(x+1 for x in range(10)), end='eol\\\\n')\\r\\n\\x04" | $(BUILD)/firmware.elf | tail -n2 | grep "^hello world! \\[1, 2, 3, 4, 5, 6, 7, 8, 9, 10\\]eol"
-
-include ../py/mkrules.mk
