@@ -1,3 +1,4 @@
+```
   +------------------------------+
   |github:micropython/micropython|
   |Upstream MicroPython project  |
@@ -51,3 +52,4 @@
   |...........................|
   |Check compilation          |
   +---------------------------+
+```
