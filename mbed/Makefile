@@ -29,11 +29,14 @@ qstrdefscond.h:	makeqstrcond.py mbedpins.h
 		../py/*.c \
 		../extmod/machine_mem.c \
 		../lib/utils/pyexec.c \
+		../lib/utils/pyhelp.c \
 		../lib/mp-readline/readline.c \
 		qstrdefsport.h \
+		main.cpp \
+		help.c \
 		modmachine.c \
 		modmbed.c \
-		modpins.cpp \
+		modpins.c \
 		mbedpins.h \
 		> $@
 

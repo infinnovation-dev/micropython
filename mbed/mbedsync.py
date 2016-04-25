@@ -42,6 +42,9 @@ extmod_files = ('machine_mem.h',
 
 lib_files = ('utils/pyexec.h',
              'utils/pyexec.c',
+             'utils/pyhelp.h',
+             'utils/pyhelp.c',
+             'utils/printf.c',
              'mp-readline/readline.h',
              'mp-readline/readline.c')
 
@@ -56,7 +59,8 @@ mbed_lib_files = ('modmachine.c',
                   'qstrdefsport.h',
                   'unistd.h')
 
-mbed_repl_files = ('main.cpp',)
+mbed_repl_files = ('main.cpp',
+                   'help.c')
 
 mbed_gen_files = (('mbedpins.h','mbedpins.h'),
                   ('qstrdefscond.h','genhdr/qstrdefs.generated.h'),
