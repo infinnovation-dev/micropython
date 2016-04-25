@@ -35,43 +35,85 @@ extern "C" {
 
 #include "mbed.h"
 extern "C" {
+  #include "py/runtime.h"
   #include "modmbed_i.h"
 }
 
-void *mbed_DigitalOut__create(int pin)
+typedef struct _mbed_DigitalOut_obj_t {
+  mp_obj_base_t base;
+  DigitalOut *dout;
+} mbed_DigitalOut_obj_t;
+
+// constructor DigitalOut(pin)
+mp_obj_t mbed_DigitalOut_make_new(const mp_obj_type_t *type,
+				  mp_uint_t n_args, mp_uint_t n_kw,
+				  const mp_obj_t *args)
 {
-  DigitalOut *dout = new DigitalOut((PinName)pin);
-  return (void *)dout;
+  (void)type;
+  mp_arg_check_num(n_args, n_kw, 1, 1, false);
+  int pin = mp_obj_get_int(args[0]);
+
+  mbed_DigitalOut_obj_t *o = m_new_obj_with_finaliser(mbed_DigitalOut_obj_t);
+  o->base.type = &mbed_DigitalOut_type;
+  o->dout = new DigitalOut((PinName)pin);
+
+  return o;
 }
 
-void mbed_DigitalOut__write(void *self, int value)
+mp_obj_t mbed_DigitalOut_write(mp_obj_t self_in, mp_obj_t value_in)
 {
-  DigitalOut *dout = (DigitalOut *)self;
-  *dout = value;
+  mbed_DigitalOut_obj_t *self = (mbed_DigitalOut_obj_t *)self_in;
+  int value = mp_obj_get_int(value_in);
+
+  self->dout->write(value);
+  return mp_const_none;
 }
 
-void *mbed_Serial__create(int tx, int rx)
+typedef struct _mbed_Serial_obj_t {
+  mp_obj_base_t base;
+  Serial *serial;
+} mbed_Serial_obj_t;
+
+// constructor Serial(pin)
+mp_obj_t mbed_Serial_make_new(const mp_obj_type_t *type,
+			      mp_uint_t n_args, mp_uint_t n_kw,
+			      const mp_obj_t *args)
 {
-  Serial *serial = new Serial((PinName)tx, (PinName)rx);
-  return (void *)serial;
+  (void)type;
+  mp_arg_check_num(n_args, n_kw, 2, 2, false);
+  int tx = mp_obj_get_int(args[0]);
+  int rx = mp_obj_get_int(args[1]);
+
+  mbed_Serial_obj_t *o = m_new_obj_with_finaliser(mbed_Serial_obj_t);
+  o->base.type = &mbed_Serial_type;
+  o->serial = new Serial((PinName)tx, (PinName)rx);
+
+  return o;
 }
 
-void mbed_Serial__putc(void *self, int c)
+mp_obj_t mbed_Serial_putc(mp_obj_t self_in, mp_obj_t chr_in)
 {
-  Serial *serial = (Serial *)self;
-  serial->putc(c);
+  mbed_Serial_obj_t *self = (mbed_Serial_obj_t *)self_in;
+  int chr = mp_obj_get_int(chr_in);
+
+  self->serial->putc(chr);
+  return mp_const_none;
 }
 
-void mbed_Serial__puts(void *self, const char *str)
+mp_obj_t mbed_Serial_puts(mp_obj_t self_in, mp_obj_t str_in)
 {
-  Serial *serial = (Serial *)self;
-  serial->puts(str);
+  mbed_Serial_obj_t *self = (mbed_Serial_obj_t *)self_in;
+  const char *str = mp_obj_str_get_str(str_in);
+
+  self->serial->puts(str);
+  return mp_const_none;
 }
 
-int mbed_Serial__getc(void *self)
+mp_obj_t mbed_Serial_getc(mp_obj_t self_in)
 {
-  Serial *serial = (Serial *)self;
-  return serial->getc();
+  mbed_Serial_obj_t *self = (mbed_Serial_obj_t *)self_in;
+  int chr = self->serial->getc();
+  return MP_OBJ_NEW_SMALL_INT(chr);
 }
 
 #endif

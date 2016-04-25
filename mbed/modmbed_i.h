@@ -22,10 +22,14 @@
  * THE SOFTWARE.
  */
 
-extern void *mbed_DigitalOut__create(int pin);
-extern void mbed_DigitalOut__write(void *self, int value);
+extern const mp_obj_type_t mbed_DigitalOut_type;
+extern mp_obj_t mbed_DigitalOut_make_new(const mp_obj_type_t *, mp_uint_t, mp_uint_t, const mp_obj_t *);
+extern mp_obj_t mbed_DigitalOut_write(mp_obj_t self_in, mp_obj_t value_in);
 
-extern void *mbed_Serial__create(int tx, int rx);
-extern void mbed_Serial__putc(void *self, int);
-extern void mbed_Serial__puts(void *self, const char *);
-extern int mbed_Serial__getc(void *self);
+extern const mp_obj_type_t mbed_Serial_type;
+extern mp_obj_t mbed_Serial_make_new(const mp_obj_type_t *type,
+				     mp_uint_t n_args, mp_uint_t n_kw,
+				     const mp_obj_t *args);
+extern mp_obj_t mbed_Serial_putc(mp_obj_t self_in, mp_obj_t chr_in);
+extern mp_obj_t mbed_Serial_puts(mp_obj_t self_in, mp_obj_t str_in);
+extern mp_obj_t mbed_Serial_getc(mp_obj_t self_in);

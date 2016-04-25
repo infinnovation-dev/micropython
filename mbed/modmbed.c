@@ -34,38 +34,6 @@
 //-----------------------------------------------------------------------
 //	DigitalOut class
 //-----------------------------------------------------------------------
-STATIC const mp_obj_type_t mbed_DigitalOut_type;
-
-typedef struct _mbed_DigitalOut_obj_t {
-  mp_obj_base_t base;
-  void *dout;
-} mbed_DigitalOut_obj_t;
-
-// constructor DigitalOut(pin)
-STATIC mp_obj_t mbed_DigitalOut_make_new(const mp_obj_type_t *type,
-					 mp_uint_t n_args, mp_uint_t n_kw,
-					 const mp_obj_t *args)
-{
-  (void)type;
-  mp_arg_check_num(n_args, n_kw, 1, 1, false);
-  int pin = mp_obj_get_int(args[0]);
-
-  mbed_DigitalOut_obj_t *o = m_new_obj_with_finaliser(mbed_DigitalOut_obj_t);
-  o->base.type = (mp_obj_t)&mbed_DigitalOut_type;
-  o->dout = mbed_DigitalOut__create(pin);
-
-  return o;
-}
-
-STATIC mp_obj_t mbed_DigitalOut_write(mp_obj_t self_in, mp_obj_t value_in)
-{
-  mbed_DigitalOut_obj_t *self = self_in;
-  int value = mp_obj_get_int(value_in);
-
-  mbed_DigitalOut__write(self->dout, value);
-  return mp_const_none;
-}
-
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_DigitalOut_write_obj,
 				 mbed_DigitalOut_write);
 
@@ -76,7 +44,7 @@ STATIC const mp_map_elem_t mbed_DigitalOut_locals_dict_table[] = {
 STATIC MP_DEFINE_CONST_DICT(mbed_DigitalOut_locals_dict,
 			    mbed_DigitalOut_locals_dict_table);
 
-STATIC const mp_obj_type_t mbed_DigitalOut_type = {
+const mp_obj_type_t mbed_DigitalOut_type = {
   { &mp_type_type },
   .name = MP_QSTR_DigitalOut,
   // .print
@@ -90,60 +58,11 @@ STATIC const mp_obj_type_t mbed_DigitalOut_type = {
 /*-----------------------------------------------------------------------
  *	Serial class
  *-----------------------------------------------------------------------*/
-STATIC const mp_obj_type_t mbed_Serial_type;
-
-typedef struct _mbed_Serial_obj_t {
-  mp_obj_base_t base;
-  void *serial;
-} mbed_Serial_obj_t;
-
-// constructor Serial(pin)
-STATIC mp_obj_t mbed_Serial_make_new(const mp_obj_type_t *type,
-				     mp_uint_t n_args, mp_uint_t n_kw,
-				     const mp_obj_t *args)
-{
-  (void)type;
-  mp_arg_check_num(n_args, n_kw, 2, 2, false);
-  int tx = mp_obj_get_int(args[0]);
-  int rx = mp_obj_get_int(args[1]);
-
-  mbed_Serial_obj_t *o = m_new_obj_with_finaliser(mbed_Serial_obj_t);
-  o->base.type = (mp_obj_t)&mbed_Serial_type;
-  o->serial = mbed_Serial__create(tx, rx);
-
-  return o;
-}
-
-STATIC mp_obj_t mbed_Serial_putc(mp_obj_t self_in, mp_obj_t chr_in)
-{
-  mbed_Serial_obj_t *self = self_in;
-  int chr = mp_obj_get_int(chr_in);
-
-  mbed_Serial__putc(self->serial, chr);
-  return mp_const_none;
-}
-
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_Serial_putc_obj,
 				 mbed_Serial_putc);
 
-STATIC mp_obj_t mbed_Serial_puts(mp_obj_t self_in, mp_obj_t str_in)
-{
-  mbed_Serial_obj_t *self = self_in;
-  const char *str = mp_obj_str_get_str(str_in);
-
-  mbed_Serial__puts(self->serial, str);
-  return mp_const_none;
-}
-
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_Serial_puts_obj,
 				 mbed_Serial_puts);
-
-STATIC mp_obj_t mbed_Serial_getc(mp_obj_t self_in)
-{
-  mbed_Serial_obj_t *self = self_in;
-  int chr = mbed_Serial__getc(self->serial);
-  return MP_OBJ_NEW_SMALL_INT(chr);
-}
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mbed_Serial_getc_obj,
 				 mbed_Serial_getc);
@@ -157,7 +76,7 @@ STATIC const mp_map_elem_t mbed_Serial_locals_dict_table[] = {
 STATIC MP_DEFINE_CONST_DICT(mbed_Serial_locals_dict,
 			    mbed_Serial_locals_dict_table);
 
-STATIC const mp_obj_type_t mbed_Serial_type = {
+const mp_obj_type_t mbed_Serial_type = {
   { &mp_type_type },
   .name = MP_QSTR_Serial,
   // .print
