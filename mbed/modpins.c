@@ -21,14 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-extern "C" {
 #include "py/mpconfig.h"
 #include "py/runtime.h"
-}
   
 #if MICROPY_PY_PINS
 
-#include "mbed.h"
+#include "mbed_interface.h"
 
 STATIC const mp_rom_map_elem_t mp_pins_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_pins) },
