@@ -71,13 +71,13 @@
 #define MICROPY_PY_STRUCT           (1)
 #define MICROPY_PY_SYS              (1)
 // Build "machine" module (port-specific)
-#define MICROPY_PY_MACHINE          1
+#define MICROPY_PY_MACHINE          (1)
 // Build "mbed" module
-#define MICROPY_PY_MBED             1
+#define MICROPY_PY_MBED             (1)
 // Select which mbed features wanted
-#define MICROPY_MBED_DIGITALOUT     1
-#define MICROPY_MBED_SERIAL         1
-#define MICROPY_PY_PINS             1
+#define MICROPY_MBED_DIGITALOUT     (1)
+#define MICROPY_MBED_SERIAL         (1)
+#define MICROPY_PY_PINS             (1)
 
 #define MICROPY_MODULE_FROZEN       (0)
 #define MICROPY_CPYTHON_COMPAT      (0)
@@ -123,9 +123,9 @@ extern const struct _mp_obj_fun_builtin_t mp_builtin_help_obj;
 extern const struct _mp_obj_module_t mp_module_mbed;
 extern const struct _mp_obj_module_t mp_module_pins;
 #define MICROPY_PORT_BUILTIN_MODULES \
-  { MP_ROM_QSTR(MP_QSTR_machine), MP_ROM_PTR(&mp_module_machine) },   \
-  { MP_ROM_QSTR(MP_QSTR_mbed), MP_ROM_PTR(&mp_module_mbed) },	      \
-  { MP_ROM_QSTR(MP_QSTR_pins), MP_ROM_PTR(&mp_module_pins) },	      \
+    { MP_ROM_QSTR(MP_QSTR_machine), MP_ROM_PTR(&mp_module_machine) }, \
+    { MP_ROM_QSTR(MP_QSTR_mbed), MP_ROM_PTR(&mp_module_mbed) }, \
+    { MP_ROM_QSTR(MP_QSTR_pins), MP_ROM_PTR(&mp_module_pins) }, \
 
 // Use by readline.c
 #define MICROPY_PORT_ROOT_POINTERS \

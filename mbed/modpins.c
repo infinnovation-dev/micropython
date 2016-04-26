@@ -23,13 +23,13 @@
  */
 #include "py/mpconfig.h"
 #include "py/runtime.h"
-  
+
 #if MICROPY_PY_PINS
 
 #include "mbed_interface.h"
 
 STATIC const mp_rom_map_elem_t mp_pins_module_globals_table[] = {
-  { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_pins) },
+    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_pins) },
 #include "mbedpins.h"
 };
 
@@ -37,9 +37,9 @@ STATIC MP_DEFINE_CONST_DICT(mp_pins_module_globals,
 			    mp_pins_module_globals_table);
 
 const mp_obj_module_t mp_module_pins = {
-  .base = { &mp_type_module },
-  .name = MP_QSTR_pins,
-  .globals = (mp_obj_dict_t *)&mp_pins_module_globals,
+    .base = { &mp_type_module },
+    .name = MP_QSTR_pins,
+    .globals = (mp_obj_dict_t *)&mp_pins_module_globals,
 };
 
 #endif // MICROPY_PY_PINS

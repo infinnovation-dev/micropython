@@ -25,27 +25,27 @@
 #include "lib/utils/pyhelp.h"
 
 STATIC const char help_text[] =
-  "Welcome to the (unofficial) mbed port of MicroPython!\n"
-  "For online help please visit http://micropython.org/help/.\n"
-  "For further help on a specific object, type help(obj)\n"
-  "\n"
-  "The following modules are available:\n"
+    "Welcome to the (unofficial) mbed port of MicroPython!\n"
+    "For online help please visit http://micropython.org/help/.\n"
+    "For further help on a specific object, type help(obj)\n"
+    "\n"
+    "The following modules are available:\n"
 #if MICROPY_PY_SYS
-  "  sys\n"
+    "  sys\n"
 #endif
 #if MICROPY_PY_STRUCT
-  "  ustruct -- cut-down version of struct\n"
+    "  ustruct -- cut-down version of struct\n"
 #endif
-  "  machine -- direct memory access and reset function\n"
-  "  mbed    -- equivalents to mbed API classes:\n"
+    "  machine -- direct memory access and reset function\n"
+    "  mbed    -- equivalents to mbed API classes:\n"
 #if MICROPY_MBED_DIGITALOUT
-  "    DigitalOut\n"
+    "    DigitalOut\n"
 #endif
 #if MICROPY_MBED_SERIAL
-  "    Serial\n"
+    "    Serial\n"
 #endif
-  "  pins    -- board-specific and generic named pins e.g. USBTX\n"
-  ;
+    "  pins    -- board-specific and generic named pins e.g. USBTX\n"
+    ;
 
 STATIC mp_obj_t mbed_help(size_t n_args, const mp_obj_t *args) {
     if (n_args == 0) {

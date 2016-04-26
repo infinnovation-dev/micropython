@@ -35,20 +35,18 @@
 #include "py/lexer.h"
 
 // Since we have no filesystem, no file exists
-mp_import_stat_t mp_import_stat(const char *path)
-{
-  (void)path;
-  return MP_IMPORT_STAT_NO_EXIST;
+mp_import_stat_t mp_import_stat(const char *path) {
+    (void)path;
+    return MP_IMPORT_STAT_NO_EXIST;
 }
 
-mp_lexer_t *mp_lexer_new_from_file(const char *filename)
-{
-  (void)filename;
-  return NULL;
+mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
+    (void)filename;
+    return NULL;
 }
 
 mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args, mp_map_t *kwargs) {
-  return mp_const_none;
+    return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
 
@@ -56,27 +54,26 @@ void mp_hal_stdout_tx_chr(char c);
 
 // Text output
 void mp_hal_stdout_tx_strn(const char *str, size_t len) {
-  while (len--) {
-    mp_hal_stdout_tx_chr(*str++);
-  }
+    while (len--) {
+        mp_hal_stdout_tx_chr(*str++);
+    }
 }
 
 void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
-  while (len--) {
-    char c = *str++;
-    if (c == '\n') {
-      mp_hal_stdout_tx_chr('\r');
+    while (len--) {
+        char c = *str++;
+        if (c == '\n') {
+            mp_hal_stdout_tx_chr('\r');
+        }
+        mp_hal_stdout_tx_chr(c);
     }
-    mp_hal_stdout_tx_chr(c);
-  }
 }
 
 void mp_hal_stdout_tx_str(const char *str) {
     mp_hal_stdout_tx_strn(str, strlen(str));
 }
 
-void mp_hal_set_interrupt_char(int c)
-{
+void mp_hal_set_interrupt_char(int c) {
 }
 
 mp_uint_t mp_hal_ticks_ms(void) {

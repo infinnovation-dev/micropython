@@ -39,23 +39,19 @@ Serial pc(USBTX, USBRX);
 
 // Implement the micropython HAL I/O functions
 extern "C" void mp_hal_stdout_tx_chr(int c);
-void mp_hal_stdout_tx_chr(int c)
-{
-  pc.putc(c);
+void mp_hal_stdout_tx_chr(int c) {
+    pc.putc(c);
 }
 extern "C" int mp_hal_stdin_rx_chr(void);
-int mp_hal_stdin_rx_chr(void)
-{
-  int c = pc.getc();
-  //printf("getc=%02x\n", c);
-  return c;
+int mp_hal_stdin_rx_chr(void) {
+    int c = pc.getc();
+    return c;
 }
 
 // Now the main program - run the REPL.
-int main()
-{
-  mp_init();
-  pyexec_friendly_repl();
-  mp_deinit();
-  return 0;
+int main() {
+    mp_init();
+    pyexec_friendly_repl();
+    mp_deinit();
+    return 0;
 }
