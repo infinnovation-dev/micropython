@@ -115,6 +115,7 @@ extern const struct _mp_obj_fun_builtin_t mp_builtin_help_obj;
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
 
+#define MICROPY_PY_SYS_PLATFORM "mbed"
 #define MICROPY_HW_BOARD_NAME "mbed"
 #define MICROPY_HW_MCU_NAME "arm"
 
