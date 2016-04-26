@@ -46,6 +46,9 @@ mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
 }
 
 mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args, mp_map_t *kwargs) {
+    (void)n_args;
+    (void)args;
+    (void)kwargs;
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
@@ -74,6 +77,7 @@ void mp_hal_stdout_tx_str(const char *str) {
 }
 
 void mp_hal_set_interrupt_char(int c) {
+    (void)c;
 }
 
 mp_uint_t mp_hal_ticks_ms(void) {
@@ -81,6 +85,7 @@ mp_uint_t mp_hal_ticks_ms(void) {
 }
 
 void mp_hal_delay_ms(mp_uint_t ms) {
+    (void)ms;
 }
 
 void gc_collect(void) {}
