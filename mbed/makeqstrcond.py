@@ -35,6 +35,7 @@ BYTES_IN_HASH = 2
 
 if_rx = re.compile(r'^\s*#\s*(if|ifdef|ifndef)\s+(.*)$')
 elif_rx = re.compile(r'^\s*#\s*elif\s+(.*)')
+else_rx = re.compile(r'^\s*#\s*else')
 endif_rx = re.compile(r'^\s*#\s*endif')
 mp_qstr_rx = re.compile(r'\b(MP_QSTR_\w*)')
 Q_rx = re.compile(r'^Q\((.*)\)$')
@@ -128,6 +129,11 @@ class QstrParser(object):
                     cond = cond.rstrip()
                     group = self.nest[-1]
                     group.append(cond)
+                    self.debug(line.rstrip())
+                elif matches(line, else_rx, groups):
+                    cond = cond.rstrip()
+                    group = self.nest[-1]
+                    group.append('1')
                     self.debug(line.rstrip())
                 elif matches(line, endif_rx, groups):
                     if not self.nest:
