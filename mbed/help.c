@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <stdio.h>
 #include "py/runtime.h"
 #include "lib/utils/pyhelp.h"
 
@@ -40,6 +41,9 @@ STATIC const char help_text[] =
     "  mbed    -- equivalents to mbed API classes:\n"
 #if MICROPY_MBED_DIGITALOUT
     "    DigitalOut\n"
+#endif
+#if MICROPY_MBED_DIGITALIN
+    "    DigitalIn\n"
 #endif
 #if MICROPY_MBED_SERIAL
     "    Serial\n"

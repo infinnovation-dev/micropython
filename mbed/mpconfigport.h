@@ -29,7 +29,7 @@
 // options to control how Micro Python is built
 
 // The mbed online compiler uses different assembler syntax, so avoid
-#define MICROPY_NLR_SETJMP          1
+#define MICROPY_NLR_SETJMP          (1)
 
 #define MICROPY_ALLOC_PATH_MAX      (256)
 #define MICROPY_ALLOC_PARSE_CHUNK_INIT (16)
@@ -76,6 +76,7 @@
 #define MICROPY_PY_MBED             (1)
 // Select which mbed features wanted
 #define MICROPY_MBED_DIGITALOUT     (1)
+#define MICROPY_MBED_DIGITALIN      (1)
 #define MICROPY_MBED_SERIAL         (1)
 #define MICROPY_PY_PINS             (1)
 
