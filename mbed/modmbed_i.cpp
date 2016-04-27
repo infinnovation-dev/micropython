@@ -91,6 +91,18 @@ mp_obj_t mbed_DigitalOut_write(mp_obj_t self_in, mp_obj_t value_in) {
     return mp_const_none;
 }
 
+mp_obj_t mbed_DigitalOut_read(mp_obj_t self_in) {
+    mbed_DigitalOut_obj_t *self = (mbed_DigitalOut_obj_t *)self_in;
+    int value = self->dout->read(); // 0 or 1
+    return MP_OBJ_NEW_SMALL_INT(value);
+}
+
+mp_obj_t mbed_DigitalOut_is_connected(mp_obj_t self_in) {
+    mbed_DigitalOut_obj_t *self = (mbed_DigitalOut_obj_t *)self_in;
+    int conn = self->dout->is_connected();
+    return conn ? mp_const_true : mp_const_false;
+}
+
 #if MICROPY_MBED_DIGITALIN
 //-----------------------------------------------------------------------
 // DigitalIn

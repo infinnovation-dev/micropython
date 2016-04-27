@@ -35,6 +35,8 @@ extern mp_obj_t mbed_wait_us(mp_obj_t us_in);
 extern const mp_obj_type_t mbed_DigitalOut_type;
 extern mp_obj_t mbed_DigitalOut_make_new(const mp_obj_type_t *, mp_uint_t, mp_uint_t, const mp_obj_t *);
 extern mp_obj_t mbed_DigitalOut_write(mp_obj_t self_in, mp_obj_t value_in);
+extern mp_obj_t mbed_DigitalOut_read(mp_obj_t self_in);
+extern mp_obj_t mbed_DigitalOut_is_connected(mp_obj_t self_in);
 
 // DigitalIn
 extern const mp_obj_type_t mbed_DigitalIn_type;

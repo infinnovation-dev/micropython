@@ -45,9 +45,15 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mbed_wait_us_obj,
 //-----------------------------------------------------------------------
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_DigitalOut_write_obj,
                                  mbed_DigitalOut_write);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mbed_DigitalOut_read_obj,
+                                 mbed_DigitalOut_read);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mbed_DigitalOut_is_connected_obj,
+                                 mbed_DigitalOut_is_connected);
 
 STATIC const mp_map_elem_t mbed_DigitalOut_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_write), (mp_obj_t)&mbed_DigitalOut_write_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&mbed_DigitalOut_read_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_is_connected), (mp_obj_t)&mbed_DigitalOut_is_connected_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(mbed_DigitalOut_locals_dict,
@@ -76,7 +82,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mbed_DigitalIn_is_connected_obj,
 
 STATIC const mp_map_elem_t mbed_DigitalIn_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&mbed_DigitalIn_read_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_mode), (mp_obj_t)&mbed_DigitalIn_read_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_mode), (mp_obj_t)&mbed_DigitalIn_mode_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_connected), (mp_obj_t)&mbed_DigitalIn_is_connected_obj },
 };
 
