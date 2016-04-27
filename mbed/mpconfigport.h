@@ -26,6 +26,14 @@
  */
 #include <stdint.h>
 
+// mbed's printf outputs to USB serial but does not do LF->CRLF conversion.
+// Ensure lib/utils/printf.c implementation is used instead.
+// But not for C++ where cstdio would get upset.
+#ifndef __cplusplus
+extern int mp__printf(const char *, ...);
+#define printf mp__printf
+#endif
+
 // options to control how Micro Python is built
 
 // The mbed online compiler uses different assembler syntax, so avoid
