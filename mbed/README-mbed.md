@@ -53,6 +53,11 @@ Caveats
 
 - Asynchronous processing (e.g. events on inputs) is not supported.
 
+More Information
+----------------
+
+Further information may be available on the [mbed MicroPython wiki](https://github.com/infinnovation/micropython/wiki)
+
 Credits
 -------
 

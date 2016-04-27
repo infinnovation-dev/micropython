@@ -66,7 +66,7 @@ mbed_gen_files = (('mbedpins.h','mbedpins.h'),
                   ('qstrdefscond.h','genhdr/qstrdefs.generated.h'),
                   ('build/genhdr/mpversion.h', 'genhdr/mpversion.h'))
 
-other_lib_files = (('README-mbed.h', 'README.md'))
+other_lib_files = (('README-mbed.md', 'README.md'),)
 
 class MbedSync(object):
     def __init__(self, gitdir, libdir, repldir):
@@ -93,6 +93,9 @@ class MbedSync(object):
         for file in mbed_lib_files:
             self.copy(self.gitpath('mbed', *file.split('/')),
                       self.libpath(*file.split('/')))
+        for afile, bfile in other_lib_files:
+            self.copy(self.gitpath('mbed', *afile.split('/')),
+                      self.libpath(*bfile.split('/')))
         # mbed repl
         for file in mbed_repl_files:
             self.copy(self.gitpath('mbed', *file.split('/')),
