@@ -29,6 +29,9 @@
 #if MICROPY_PY_MBED
 
 #include "modmbed_i.h"
+#if MICROPY_MBED_SERIAL
+#include "serial_api.h"
+#endif
 
 #if MICROPY_PY_BUILTINS_FLOAT
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mbed_wait_obj,
@@ -160,6 +163,29 @@ STATIC const mp_rom_map_elem_t mbed_module_globals_table[] = {
 #endif
 #if MICROPY_MBED_SERIAL
     { MP_ROM_QSTR(MP_QSTR_Serial), MP_ROM_PTR(&mbed_Serial_type) },
+#endif
+    // Constants
+#if MICROPY_MBED_DIGITALIN
+    { MP_ROM_QSTR(MP_QSTR_PullNone), MP_ROM_INT(PullNone) },
+    { MP_ROM_QSTR(MP_QSTR_PullUp), MP_ROM_INT(PullUp) },
+    // N.B. KL05Z, KL25Z, KL26Z, MAX32600, MAXWSNENV do not have PullDown
+#if !(defined(TARGET_KL25Z))
+    { MP_ROM_QSTR(MP_QSTR_PullDown), MP_ROM_INT(PullDown) },
+#endif
+    { MP_ROM_QSTR(MP_QSTR_PullDefault), MP_ROM_INT(PullDefault) },
+    // TODO Some boards have OpenDrain
+    // TODO IOTSS, MPS2, MAX32600, MAXWSNENV, LPC15XX have Repeater
+#endif
+#if MICROPY_MBED_SERIAL
+    { MP_ROM_QSTR(MP_QSTR_ParityNone), MP_ROM_INT(ParityNone) },
+    { MP_ROM_QSTR(MP_QSTR_ParityOdd), MP_ROM_INT(ParityOdd) },
+    { MP_ROM_QSTR(MP_QSTR_ParityEven), MP_ROM_INT(ParityEven) },
+    { MP_ROM_QSTR(MP_QSTR_ParityForced1), MP_ROM_INT(ParityForced1) },
+    { MP_ROM_QSTR(MP_QSTR_ParityForced0), MP_ROM_INT(ParityForced0) },
+    { MP_ROM_QSTR(MP_QSTR_FlowControlNone), MP_ROM_INT(FlowControlNone) },
+    { MP_ROM_QSTR(MP_QSTR_FlowControlRTS), MP_ROM_INT(FlowControlRTS) },
+    { MP_ROM_QSTR(MP_QSTR_FlowControlCTS), MP_ROM_INT(FlowControlCTS) },
+    { MP_ROM_QSTR(MP_QSTR_FlowControlRTSCTS), MP_ROM_INT(FlowControlRTSCTS) },
 #endif
 };
 
