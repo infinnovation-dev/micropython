@@ -82,7 +82,6 @@ class MbedSync(object):
             if file.endswith('.c') or file.endswith('.h'):
                 self.copy(self.gitpath('py',file),
                           self.libpath('py',file))
-                break
         for file in extmod_files:
             self.copy(self.gitpath('extmod',*file.split('/')),
                       self.libpath('extmod',*file.split('/')))
