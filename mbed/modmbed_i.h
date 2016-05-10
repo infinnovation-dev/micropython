@@ -45,6 +45,18 @@ extern mp_obj_t mbed_DigitalIn_read(mp_obj_t self_in);
 extern mp_obj_t mbed_DigitalIn_mode(mp_obj_t self_in, mp_obj_t mode_in);
 extern mp_obj_t mbed_DigitalIn_is_connected(mp_obj_t self_in);
 
+// PwmOut
+extern const mp_obj_type_t mbed_PwmOut_type;
+extern mp_obj_t mbed_PwmOut_make_new(const mp_obj_type_t *type, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args);
+extern mp_obj_t mbed_PwmOut_write(mp_obj_t self_in, mp_obj_t value_in);
+extern mp_obj_t mbed_PwmOut_read(mp_obj_t self_in);
+extern mp_obj_t mbed_PwmOut_period(mp_obj_t self_in, mp_obj_t s_in);
+extern mp_obj_t mbed_PwmOut_period_ms(mp_obj_t self_in, mp_obj_t ms_in);
+extern mp_obj_t mbed_PwmOut_period_us(mp_obj_t self_in, mp_obj_t us_in);
+extern mp_obj_t mbed_PwmOut_pulsewidth(mp_obj_t self_in, mp_obj_t s_in);
+extern mp_obj_t mbed_PwmOut_pulsewidth_ms(mp_obj_t self_in, mp_obj_t ms_in);
+extern mp_obj_t mbed_PwmOut_pulsewidth_us(mp_obj_t self_in, mp_obj_t us_in);
+
 // Serial
 extern const mp_obj_type_t mbed_Serial_type;
 extern mp_obj_t mbed_Serial_make_new(const mp_obj_type_t *type,

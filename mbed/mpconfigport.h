@@ -85,6 +85,7 @@ extern int mp__printf(const char *, ...);
 // Select which mbed features wanted
 #define MICROPY_MBED_DIGITALOUT     (1)
 #define MICROPY_MBED_DIGITALIN      (1)
+#define MICROPY_MBED_PWMOUT         (1)
 #define MICROPY_MBED_SERIAL         (1)
 #define MICROPY_PY_PINS             (1)
 

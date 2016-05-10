@@ -151,6 +151,90 @@ mp_obj_t mbed_DigitalIn_is_connected(mp_obj_t self_in) {
 
 #endif // MICROPY_MBED_DIGITALIN
 
+#if MICROPY_MBED_PWMOUT
+//-----------------------------------------------------------------------
+// PwmOut
+//-----------------------------------------------------------------------
+struct mbed_PwmOut_obj_t {
+  mp_obj_base_t base;
+  PwmOut *po;
+};
+
+// constructor PwmOut(pin)
+mp_obj_t mbed_PwmOut_make_new(const mp_obj_type_t *type,
+                              mp_uint_t n_args, mp_uint_t n_kw,
+                              const mp_obj_t *args) {
+    (void)type;
+    mp_arg_check_num(n_args, n_kw, 1, 1, false);
+    int pin = mp_obj_get_int(args[0]);
+    mbed_PwmOut_obj_t *o = m_new_obj_with_finaliser(mbed_PwmOut_obj_t);
+    o->base.type = &mbed_PwmOut_type;
+    o->po = new PwmOut((PinName)pin);
+    return o;
+}
+
+#if MICROPY_PY_BUILTINS_FLOAT
+mp_obj_t mbed_PwmOut_write(mp_obj_t self_in, mp_obj_t value_in) {
+    mbed_PwmOut_obj_t *self = (mbed_PwmOut_obj_t *)self_in;
+    mp_float_t value = mp_obj_get_float(value_in);
+    self->po->write((float)value);
+    return mp_const_none;
+}
+
+mp_obj_t mbed_PwmOut_read(mp_obj_t self_in) {
+    mbed_PwmOut_obj_t *self = (mbed_PwmOut_obj_t *)self_in;
+    float value = self->po->read();
+    return mp_obj_new_float((mp_float_t)value);
+}
+#endif
+
+#if MICROPY_PY_BUILTINS_FLOAT
+mp_obj_t mbed_PwmOut_period(mp_obj_t self_in, mp_obj_t s_in) {
+    mbed_PwmOut_obj_t *self = (mbed_PwmOut_obj_t *)self_in;
+    mp_float_t s = mp_obj_get_float(s_in);
+    self->po->period((float)s);
+    return mp_const_none;
+}
+#endif
+
+mp_obj_t mbed_PwmOut_period_ms(mp_obj_t self_in, mp_obj_t ms_in) {
+    mbed_PwmOut_obj_t *self = (mbed_PwmOut_obj_t *)self_in;
+    int ms = mp_obj_get_int(ms_in);
+    self->po->period_ms(ms);
+    return mp_const_none;
+}
+
+mp_obj_t mbed_PwmOut_period_us(mp_obj_t self_in, mp_obj_t us_in) {
+    mbed_PwmOut_obj_t *self = (mbed_PwmOut_obj_t *)self_in;
+    int us = mp_obj_get_int(us_in);
+    self->po->period_us(us);
+    return mp_const_none;
+}
+
+#if MICROPY_PY_BUILTINS_FLOAT
+mp_obj_t mbed_PwmOut_pulsewidth(mp_obj_t self_in, mp_obj_t s_in) {
+    mbed_PwmOut_obj_t *self = (mbed_PwmOut_obj_t *)self_in;
+    mp_float_t s = mp_obj_get_float(s_in);
+    self->po->pulsewidth(s);
+    return mp_const_none;
+}
+#endif
+
+mp_obj_t mbed_PwmOut_pulsewidth_ms(mp_obj_t self_in, mp_obj_t ms_in) {
+    mbed_PwmOut_obj_t *self = (mbed_PwmOut_obj_t *)self_in;
+    int ms = mp_obj_get_int(ms_in);
+    self->po->pulsewidth_ms(ms);
+    return mp_const_none;
+}
+
+mp_obj_t mbed_PwmOut_pulsewidth_us(mp_obj_t self_in, mp_obj_t us_in) {
+    mbed_PwmOut_obj_t *self = (mbed_PwmOut_obj_t *)self_in;
+    int us = mp_obj_get_int(us_in);
+    self->po->pulsewidth_us(us);
+    return mp_const_none;
+}
+#endif // MICROPY_MBED_PWMOUT
+
 //-----------------------------------------------------------------------
 // Serial
 //-----------------------------------------------------------------------

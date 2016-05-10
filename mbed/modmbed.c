@@ -102,6 +102,59 @@ const mp_obj_type_t mbed_DigitalIn_type = {
 
 #endif // MICROPY_MBED_DIGITALIN
 
+#if MICROPY_MBED_PWMOUT
+/*-----------------------------------------------------------------------
+ *      PwmOut class
+ *-----------------------------------------------------------------------*/
+#if MICROPY_PY_BUILTINS_FLOAT
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_PwmOut_write_obj,
+                                 mbed_PwmOut_write);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mbed_PwmOut_read_obj,
+                                 mbed_PwmOut_read);
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_PwmOut_period_obj,
+                                 mbed_PwmOut_period);
+#endif
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_PwmOut_period_ms_obj,
+                                 mbed_PwmOut_period_ms);
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_PwmOut_period_us_obj,
+                                 mbed_PwmOut_period_us);
+#if MICROPY_PY_BUILTINS_FLOAT
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_PwmOut_pulsewidth_obj,
+                                 mbed_PwmOut_pulsewidth);
+#endif
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_PwmOut_pulsewidth_ms_obj,
+                                 mbed_PwmOut_pulsewidth_ms);
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mbed_PwmOut_pulsewidth_us_obj,
+                                 mbed_PwmOut_pulsewidth_us);
+
+STATIC const mp_map_elem_t mbed_PwmOut_locals_dict_table[] = {
+#if MICROPY_PY_BUILTINS_FLOAT
+    { MP_OBJ_NEW_QSTR(MP_QSTR_write), (mp_obj_t)&mbed_PwmOut_write_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&mbed_PwmOut_read_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_period), (mp_obj_t)&mbed_PwmOut_period_obj },
+#endif
+    { MP_OBJ_NEW_QSTR(MP_QSTR_period_ms), (mp_obj_t)&mbed_PwmOut_period_ms_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_period_us), (mp_obj_t)&mbed_PwmOut_period_us_obj },
+#if MICROPY_PY_BUILTINS_FLOAT
+    { MP_OBJ_NEW_QSTR(MP_QSTR_pulsewidth), (mp_obj_t)&mbed_PwmOut_pulsewidth_obj },
+#endif
+    { MP_OBJ_NEW_QSTR(MP_QSTR_pulsewidth_ms), (mp_obj_t)&mbed_PwmOut_pulsewidth_ms_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_pulsewidth_us), (mp_obj_t)&mbed_PwmOut_pulsewidth_us_obj },
+};
+
+STATIC MP_DEFINE_CONST_DICT(mbed_PwmOut_locals_dict,
+                            mbed_PwmOut_locals_dict_table);
+
+const mp_obj_type_t mbed_PwmOut_type = {
+    { &mp_type_type },
+    .name = MP_QSTR_PwmOut,
+    // .print
+    .make_new = mbed_PwmOut_make_new,
+    .locals_dict = (mp_obj_t)&mbed_PwmOut_locals_dict,
+};
+
+#endif // MICROPY_MBED_PWMOUT
+
 #if MICROPY_MBED_SERIAL
 /*-----------------------------------------------------------------------
  *      Serial class
@@ -160,6 +213,9 @@ STATIC const mp_rom_map_elem_t mbed_module_globals_table[] = {
 #endif
 #if MICROPY_MBED_DIGITALIN
     { MP_ROM_QSTR(MP_QSTR_DigitalIn), MP_ROM_PTR(&mbed_DigitalIn_type) },
+#endif
+#if MICROPY_MBED_PWMOUT
+    { MP_ROM_QSTR(MP_QSTR_PwmOut), MP_ROM_PTR(&mbed_PwmOut_type) },
 #endif
 #if MICROPY_MBED_SERIAL
     { MP_ROM_QSTR(MP_QSTR_Serial), MP_ROM_PTR(&mbed_Serial_type) },

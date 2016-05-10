@@ -20,6 +20,8 @@ PINS_PATH_K64F = TARGET_Freescale/TARGET_KPSDK_MCUS/TARGET_MCU_K64F/TARGET_FRDM
 PINS_PATH_LPC1768 = TARGET_NXP/TARGET_LPC176X/TARGET_MBED_LPC1768
 PINS_PATH_NUCLEO_F401RE = TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F401RE
 
+all:		mbedpins.h qstrdefscond.h
+
 mbedpins.h:	makembedpins.py
 	python makembedpins.py -d $(foreach t,$(PINS_TARGETS),$(t):$(MBED_HAL)/$(PINS_PATH_$(t))/PinNames.h) > $@
 
