@@ -20,27 +20,29 @@ PINS_PATH_K64F = TARGET_Freescale/TARGET_KPSDK_MCUS/TARGET_MCU_K64F/TARGET_FRDM
 PINS_PATH_LPC1768 = TARGET_NXP/TARGET_LPC176X/TARGET_MBED_LPC1768
 PINS_PATH_NUCLEO_F401RE = TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F401RE
 
+PYSRC = $(wildcard ../py/*.c)
+EXTMODSRC = ../extmod/machine_mem.c
+MPLIBSRC = ../lib/utils/pyexec.c ../lib/utils/pyhelp.c ../lib/mp-readline/readline.c
+PORTSRC = modmachine.c modmbed.c modpins.c
+REPLSRC = main.cpp help.c
+
+# Files containing MP_QSTR_ to be processed by makeqstrcond
+QSTRSRC =	../py/qstrdefs.h \
+		$(PYSRC) \
+		$(EXTMODSRC) \
+		$(MPLIBSRC) \
+		qstrdefsport.h \
+		$(REPLSRC) \
+		$(PORTSRC) \
+		mbedpins.h
+
 all:		mbedpins.h qstrdefscond.h
 
 mbedpins.h:	makembedpins.py
 	python makembedpins.py -d $(foreach t,$(PINS_TARGETS),$(t):$(MBED_HAL)/$(PINS_PATH_$(t))/PinNames.h) > $@
 
-qstrdefscond.h:	makeqstrcond.py mbedpins.h
-	python makeqstrcond.py \
-		../py/qstrdefs.h \
-		../py/*.c \
-		../extmod/machine_mem.c \
-		../lib/utils/pyexec.c \
-		../lib/utils/pyhelp.c \
-		../lib/mp-readline/readline.c \
-		qstrdefsport.h \
-		main.cpp \
-		help.c \
-		modmachine.c \
-		modmbed.c \
-		modpins.c \
-		mbedpins.h \
-		> $@
+qstrdefscond.h:	makeqstrcond.py $(QSTRSRC)
+	python makeqstrcond.py $(QSTRSRC) > $@
 
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h
