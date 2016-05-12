@@ -45,6 +45,9 @@ STATIC const char help_text[] =
 #if MICROPY_MBED_DIGITALIN
     "    DigitalIn\n"
 #endif
+#if MICROPY_MBED_PWMOUT
+    "    PwmOut\n"
+#endif
 #if MICROPY_MBED_SERIAL
     "    Serial\n"
 #endif
