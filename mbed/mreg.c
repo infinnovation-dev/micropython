@@ -31,14 +31,6 @@ STATIC void mreg_array_print_helper(const mp_print_t *print, char *ptr, const mr
 /*-----------------------------------------------------------------------
  *      MregStruct
  *-----------------------------------------------------------------------*/
-const mp_obj_type_t mreg_struct_type;
-
-typedef struct {
-    mp_obj_base_t base;
-    char *ptr;
-    const mreg_field_t *fields;
-} mreg_struct_obj_t;
-
 STATIC mp_obj_t mreg_struct_new(void *ptr, const mreg_field_t *fields) {
     mreg_struct_obj_t *o = m_new_obj(mreg_struct_obj_t);
     o->base.type = &mreg_struct_type;
@@ -134,12 +126,6 @@ const mp_obj_type_t mreg_struct_type = {
  *-----------------------------------------------------------------------*/
 const mp_obj_type_t mreg_array_type;
 
-typedef struct {
-    mp_obj_base_t base;
-    char *ptr;
-    const mreg_desc_t *desc;
-} mreg_array_obj_t;
-
 STATIC mp_obj_t mreg_array_new(void *ptr, const mreg_desc_t *desc) {
     mreg_array_obj_t *o = m_new_obj(mreg_array_obj_t);
     o->base.type = &mreg_array_type;
@@ -224,109 +210,3 @@ const mp_obj_type_t mreg_array_type = {
 };
 
 // FIXME len: unary_op MP_UNARY_OP_LEN
-
-/*=======================================================================
- *      K64F specific
- *=======================================================================*/
-#include "cmsis.h"
-#include "MK64F12.h"
-
-#define MREG_TYPE PIT_Type
-const mreg_field_t mreg_PIT_CHANNEL_fields[] = {
-    MREG_ITEM_U32(CHANNEL, LDVAL),
-    MREG_ITEM_U32(CHANNEL, CVAL),
-    MREG_ITEM_U32(CHANNEL, TCTRL),
-    MREG_ITEM_U32(CHANNEL, TFLG),
-    {0},
-};
-
-const mreg_field_t mreg_PIT_fields[] = {
-    MREG_U32(MCR),
-    MREG_ARRAY_STRUCT(CHANNEL, mreg_PIT_CHANNEL_fields),
-    {0},
-};
-#undef MREG_TYPE
-
-const mreg_struct_obj_t mreg_PIT_obj = {
-    .base = { &mreg_struct_type },
-    .ptr = (char *)PIT,
-    .fields = mreg_PIT_fields,
-};
-
-#define MREG_TYPE FTM_Type
-STATIC const mreg_field_t mreg_FTM_CONTROLS_fields[] = {
-    MREG_ITEM_U32(CONTROLS, CnSC),
-    MREG_ITEM_U32(CONTROLS, CnV),
-    {0},
-};
-
-STATIC const mreg_field_t mreg_FTM_fields[] = {
-    MREG_U32(SC),
-    MREG_U32(CNT),
-    MREG_U32(MOD),
-    MREG_ARRAY_STRUCT(CONTROLS, mreg_FTM_CONTROLS_fields),
-    MREG_U32(CNTIN),
-    MREG_U32(STATUS),
-    MREG_U32(MODE),
-    MREG_U32(SYNC),
-    MREG_U32(OUTINIT),
-    MREG_U32(OUTMASK),
-    MREG_U32(COMBINE),
-    MREG_U32(DEADTIME),
-    MREG_U32(EXTTRIG),
-    MREG_U32(POL),
-    MREG_U32(FMS),
-    MREG_U32(FILTER),
-    MREG_U32(FLTCTRL),
-    MREG_U32(QDCTRL),
-    MREG_U32(CONF),
-    MREG_U32(FLTPOL),
-    MREG_U32(SYNCONF),
-    MREG_U32(INVCTRL),
-    MREG_U32(SWOCTRL),
-    MREG_U32(PWMLOAD),
-    {0},
-};
-#undef FTM_Type
-
-const mreg_struct_obj_t mreg_FTM0_obj = {
-    .base = { &mreg_struct_type },
-    .ptr = (char *)FTM0,
-    .fields = mreg_FTM_fields,
-};
-
-const mreg_struct_obj_t mreg_FTM1_obj = {
-    .base = { &mreg_struct_type },
-    .ptr = (char *)FTM1,
-    .fields = mreg_FTM_fields,
-};
-
-const mreg_struct_obj_t mreg_FTM2_obj = {
-    .base = { &mreg_struct_type },
-    .ptr = (char *)FTM2,
-    .fields = mreg_FTM_fields,
-};
-
-const mreg_struct_obj_t mreg_FTM3_obj = {
-    .base = { &mreg_struct_type },
-    .ptr = (char *)FTM3,
-    .fields = mreg_FTM_fields,
-};
-
-STATIC const mp_rom_map_elem_t mreg_module_globals_table[] = {
-    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_mreg) },
-    { MP_ROM_QSTR(MP_QSTR_PIT), MP_ROM_PTR(&mreg_PIT_obj) },
-    { MP_ROM_QSTR(MP_QSTR_FTM0), MP_ROM_PTR(&mreg_FTM0_obj) },
-    { MP_ROM_QSTR(MP_QSTR_FTM1), MP_ROM_PTR(&mreg_FTM1_obj) },
-    { MP_ROM_QSTR(MP_QSTR_FTM2), MP_ROM_PTR(&mreg_FTM2_obj) },
-    { MP_ROM_QSTR(MP_QSTR_FTM3), MP_ROM_PTR(&mreg_FTM3_obj) },
-};
-
-STATIC MP_DEFINE_CONST_DICT(mreg_module_globals,
-                            mreg_module_globals_table);
-
-const mp_obj_module_t mp_module_mreg = {
-    .base = { &mp_type_module },
-    .name = MP_QSTR_mreg,
-    .globals = (mp_obj_dict_t *)&mreg_module_globals,
-};

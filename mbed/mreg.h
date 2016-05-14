@@ -44,6 +44,18 @@ typedef struct _mreg_field_t {
     mreg_desc_t desc;
 } mreg_field_t;
 
+typedef struct {
+    mp_obj_base_t base;
+    char *ptr;
+    const mreg_field_t *fields;
+} mreg_struct_obj_t;
+
+typedef struct {
+    mp_obj_base_t base;
+    char *ptr;
+    const mreg_desc_t *desc;
+} mreg_array_obj_t;
+
 #define MREG_DIM(a) (sizeof(a) / sizeof((a)[0]))
 #define MREG_TDIM(f) MREG_DIM(((MREG_TYPE *)0)->f)
 #define MREG_TSTRIDE(f) sizeof(((MREG_TYPE *)0)->f[0])
@@ -52,8 +64,12 @@ typedef struct _mreg_field_t {
 #define MREG_OFF(f) offsetof(MREG_TYPE, f)
 #define MREG_U32(f) {#f, MREG_OFF(f), {MREG_TYPE_U32, 0, 0, 0}}
 #define MREG_STRUCT(f,d) {#f, MREG_OFF(f), {MREG_TYPE_STRUCT, 0, 0, d}}
-#define MREG_ARRAY_U32(f,n) {#f, MREG_OFF(f), {MREG_TYPE_U32, n, 0, 0}}
+#define MREG_ARRAY_U32_N(f,n) {#f, MREG_OFF(f), {MREG_TYPE_U32, n, 0, 0}}
+#define MREG_ARRAY_U32(f) MREG_ARRAY_U32_N(f,MREG_TDIM(f))
 #define MREG_ARRAY_STRUCT_N(f,d,n) {#f, MREG_OFF(f), {MREG_TYPE_STRUCT, n, MREG_OFF(f[1]) - MREG_OFF(f[0]), d}}
 #define MREG_ARRAY_STRUCT(f,d) MREG_ARRAY_STRUCT_N(f,d,MREG_TDIM(f))
+
+extern const mp_obj_type_t mreg_struct_type;
+extern const mp_obj_type_t mreg_array_type;
 
 #endif // __MICROPY_INCLUDED_MREG_H
