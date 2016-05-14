@@ -133,10 +133,12 @@ extern const struct _mp_obj_fun_builtin_t mp_builtin_help_obj;
 // Extra modules to build in
 extern const struct _mp_obj_module_t mp_module_mbed;
 extern const struct _mp_obj_module_t mp_module_pins;
+extern const struct _mp_obj_module_t mp_module_mreg;
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_machine), MP_ROM_PTR(&mp_module_machine) }, \
     { MP_ROM_QSTR(MP_QSTR_mbed), MP_ROM_PTR(&mp_module_mbed) }, \
     { MP_ROM_QSTR(MP_QSTR_pins), MP_ROM_PTR(&mp_module_pins) }, \
+    { MP_ROM_QSTR(MP_QSTR_mreg), MP_ROM_PTR(&mp_module_mreg) }, \
 
 // Use by readline.c
 #define MICROPY_PORT_ROOT_POINTERS \
