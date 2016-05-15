@@ -87,7 +87,12 @@ extern int mp__printf(const char *, ...);
 #define MICROPY_MBED_DIGITALIN      (1)
 #define MICROPY_MBED_PWMOUT         (1)
 #define MICROPY_MBED_SERIAL         (1)
+// Build "pins" module
 #define MICROPY_PY_PINS             (1)
+// Build "k64f" module
+#if defined(TARGET_K64F)
+#define MICROPY_PY_K64F             (1)
+#endif
 
 #define MICROPY_MODULE_FROZEN       (0)
 #define MICROPY_CPYTHON_COMPAT      (0)
@@ -131,14 +136,43 @@ extern const struct _mp_obj_fun_builtin_t mp_builtin_help_obj;
 #define MP_STATE_PORT MP_STATE_VM
 
 // Extra modules to build in
+#if MICROPY_PY_MBED
 extern const struct _mp_obj_module_t mp_module_mbed;
+#define MICROPY_PY_MBED_DEF \
+    { MP_ROM_QSTR(MP_QSTR_mbed), MP_ROM_PTR(&mp_module_mbed) },
+#else
+#define MICROPY_PY_MBED_DEF
+#endif
+
+#if MICROPY_PY_MACHINE
+extern const struct _mp_obj_module_t mp_module_machine;
+#define MICROPY_PY_MACHINE_DEF \
+    { MP_ROM_QSTR(MP_QSTR_machine), MP_ROM_PTR(&mp_module_machine) },
+#else
+#define MICROPY_PY_MACHINE_DEF
+#endif
+
+#if MICROPY_PY_PINS
 extern const struct _mp_obj_module_t mp_module_pins;
+#define MICROPY_PY_PINS_DEF \
+    { MP_ROM_QSTR(MP_QSTR_pins), MP_ROM_PTR(&mp_module_pins) },
+#else
+#define MICROPY_PY_PINS_DEF
+#endif
+
+#if defined(TARGET_K64F) && MICROPY_PY_K64F
 extern const struct _mp_obj_module_t mp_module_k64f;
+#define MICROPY_PY_K64F_DEF \
+    { MP_ROM_QSTR(MP_QSTR_k64f), MP_ROM_PTR(&mp_module_k64f) },
+#else
+#define MICROPY_PY_K64F_DEF
+#endif
+
 #define MICROPY_PORT_BUILTIN_MODULES \
-    { MP_ROM_QSTR(MP_QSTR_machine), MP_ROM_PTR(&mp_module_machine) }, \
-    { MP_ROM_QSTR(MP_QSTR_mbed), MP_ROM_PTR(&mp_module_mbed) }, \
-    { MP_ROM_QSTR(MP_QSTR_pins), MP_ROM_PTR(&mp_module_pins) }, \
-    { MP_ROM_QSTR(MP_QSTR_k64f), MP_ROM_PTR(&mp_module_k64f) }, \
+    MICROPY_PY_MBED_DEF              \
+    MICROPY_PY_MACHINE_DEF           \
+    MICROPY_PY_PINS_DEF              \
+    MICROPY_PY_K64F_DEF              \
 
 // Use by readline.c
 #define MICROPY_PORT_ROOT_POINTERS \

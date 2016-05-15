@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include "py/runtime.h"
+#if defined(TARGET_K64F) && MICROPY_PY_K64F
 #include "mreg.h"
 #include "MK64F12.h"
 
@@ -222,3 +223,5 @@ const mp_obj_module_t mp_module_k64f = {
     .name = MP_QSTR_k64f,
     .globals = (mp_obj_dict_t *)&k64f_module_globals,
 };
+
+#endif

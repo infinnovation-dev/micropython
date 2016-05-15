@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include "py/runtime.h"
+#include "py/runtime0.h"
 #include "mreg.h"
 #include <string.h>
 
@@ -42,11 +43,15 @@ STATIC mp_obj_t mreg_struct_new(void *ptr, const mreg_field_t *fields) {
 // Get, set or delete an attribute
 STATIC void mreg_struct_attr(mp_obj_t self_in, qstr qattr, mp_obj_t *dest) {
     mreg_struct_obj_t *self = (mreg_struct_obj_t *)self_in;
-    const char *attr = qstr_str(qattr);
-    const mreg_field_t *field;
     if (dest[0] != MP_OBJ_NULL) {
         return;                         /* FAIL for store or delete */
     }
+    if (qattr == MP_QSTR_address) {
+        dest[0] = mp_obj_new_int((mp_uint_t)self->ptr);
+        return;
+    }
+    const char *attr = qstr_str(qattr);
+    const mreg_field_t *field;
     for (field=self->fields; field->name; field++) {
         if (! strcmp(field->name, attr)) {
             char *fptr = self->ptr + field->offset;
@@ -107,17 +112,10 @@ STATIC void mreg_struct_print(const mp_print_t *print, mp_obj_t self_in, mp_prin
     mreg_struct_print_helper(print, self->ptr, self->fields, kind);
 }
 
-STATIC const mp_map_elem_t mreg_struct_locals_dict_table[] = {
-};
-
-STATIC MP_DEFINE_CONST_DICT(mreg_struct_locals_dict,
-                            mreg_struct_locals_dict_table);
-
 const mp_obj_type_t mreg_struct_type = {
     { &mp_type_type },
     .name = MP_QSTR_MregStruct,
     .print = mreg_struct_print,
-    .locals_dict = (mp_obj_t)&mreg_struct_locals_dict,
     .attr = mreg_struct_attr,
 };
 
@@ -132,6 +130,18 @@ STATIC mp_obj_t mreg_array_new(void *ptr, const mreg_desc_t *desc) {
     o->ptr = ptr;
     o->desc = desc;
     return o;
+}
+
+// Get, set or delete an attribute
+STATIC void mreg_array_attr(mp_obj_t self_in, qstr qattr, mp_obj_t *dest) {
+    mreg_array_obj_t *self = (mreg_array_obj_t *)self_in;
+    if (dest[0] != MP_OBJ_NULL) {
+        return;                         /* FAIL for store or delete */
+    }
+    if (qattr == MP_QSTR_address) {
+        dest[0] = mp_obj_new_int((mp_uint_t)self->ptr);
+        return;
+    }
 }
 
 STATIC mp_obj_t mreg_array_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t value) {
@@ -195,18 +205,21 @@ STATIC void mreg_array_print(const mp_print_t *print, mp_obj_t self_in, mp_print
     mreg_array_print_helper(print, self->ptr, self->desc, kind);
 }
 
-STATIC const mp_map_elem_t mreg_array_locals_dict_table[] = {
-};
-
-STATIC MP_DEFINE_CONST_DICT(mreg_array_locals_dict,
-                            mreg_array_locals_dict_table);
+STATIC mp_obj_t mreg_array_unary_op(mp_uint_t op, mp_obj_t self_in) {
+    mreg_array_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    switch (op) {
+    case MP_UNARY_OP_LEN:
+        return MP_OBJ_NEW_SMALL_INT(self->desc->dim);
+    default:
+        return MP_OBJ_NULL;             // op not supported
+    }
+}
 
 const mp_obj_type_t mreg_array_type = {
     { &mp_type_type },
     .name = MP_QSTR_MregArray,
     .print = mreg_array_print,
-    .locals_dict = (mp_obj_t)&mreg_array_locals_dict,
+    .attr = mreg_array_attr,
     .subscr = mreg_array_subscr,
+    .unary_op = mreg_array_unary_op,
 };
-
-// FIXME len: unary_op MP_UNARY_OP_LEN
