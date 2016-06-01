@@ -64,10 +64,19 @@ STATIC void mreg_struct_attr(mp_obj_t self_in, qstr qattr, mp_obj_t *dest) {
                 case MREG_TYPE_STRUCT:
                     // Sub-structure
                     dest[0] = mreg_struct_new(fptr, desc->itemtype);
-                case MREG_TYPE_U32:
-                    ;
-                    uint32_t value = *(uint32_t *)fptr;
-                    dest[0] = mp_obj_new_int(value);
+                    break;
+                case MREG_TYPE_U8:;
+                    uint8_t value8 = *(uint8_t *)fptr;
+                    dest[0] = mp_obj_new_int(value8);
+                    break;
+                case MREG_TYPE_U16:;
+                    uint16_t value16 = *(uint16_t *)fptr;
+                    dest[0] = mp_obj_new_int(value16);
+                    break;
+                case MREG_TYPE_U32:;
+                    uint32_t value32 = *(uint32_t *)fptr;
+                    dest[0] = mp_obj_new_int(value32);
+                    break;
                 }
             }
             return;
@@ -97,9 +106,17 @@ STATIC void mreg_struct_print_helper(const mp_print_t *print, char *ptr, const m
             case MREG_TYPE_STRUCT:
                 mreg_struct_print_helper(print, fptr, field->desc.itemtype, kind);
                 break;
+            case MREG_TYPE_U8:;
+                unsigned int value8 = *(uint8_t *)fptr;
+                mp_printf(print, "%u", value8);
+                break;
+            case MREG_TYPE_U16:;
+                unsigned int value16 = *(uint16_t *)fptr;
+                mp_printf(print, "%u", value16);
+                break;
             case MREG_TYPE_U32:;
-                unsigned int value = *(uint32_t *)fptr;
-                mp_printf(print, "%u", value);
+                unsigned int value32 = *(uint32_t *)fptr;
+                mp_printf(print, "%u", value32);
                 break;
             }
         }
@@ -158,10 +175,18 @@ STATIC mp_obj_t mreg_array_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t 
     case MREG_TYPE_STRUCT:;
         char *fptr = self->ptr + (index * self->desc->stride);
         return mreg_struct_new(fptr, self->desc->itemtype);
+    case MREG_TYPE_U8:;
+        uint8_t *array8 = (uint8_t *)self->ptr;
+        uint8_t value8 = array8[index];
+        return mp_obj_new_int(value8);
+    case MREG_TYPE_U16:;
+        uint16_t *array16 = (uint16_t *)self->ptr;
+        uint16_t value16 = array16[index];
+        return mp_obj_new_int(value16);
     case MREG_TYPE_U32:;
-        uint32_t *array = (uint32_t *)self->ptr;
-        uint32_t value = array[index];
-        return mp_obj_new_int(value);
+        uint32_t *array32 = (uint32_t *)self->ptr;
+        uint32_t value32 = array32[index];
+        return mp_obj_new_int(value32);
     }
     return mp_const_none;               /* FIXME assert? */
 }
@@ -184,9 +209,17 @@ STATIC void mreg_array_print_helper(const mp_print_t *print, char *ptr, const mr
         case MREG_TYPE_STRUCT:
             mreg_struct_print_helper(print, fptr, desc->itemtype, kind);
             break;
+        case MREG_TYPE_U8:;
+            unsigned int value8 = *(uint8_t *)fptr;
+            mp_printf(print, "%u", value8);
+            break;
+        case MREG_TYPE_U16:;
+            unsigned int value16 = *(uint16_t *)fptr;
+            mp_printf(print, "%u", value16);
+            break;
         case MREG_TYPE_U32:;
-            unsigned int value = *(uint32_t *)fptr;
-            mp_printf(print, "%u", value);
+            unsigned int value32 = *(uint32_t *)fptr;
+            mp_printf(print, "%u", value32);
             break;
         }
     }

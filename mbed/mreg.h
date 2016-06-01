@@ -28,6 +28,8 @@
 
 typedef enum {
     MREG_TYPE_STRUCT,
+    MREG_TYPE_U8,
+    MREG_TYPE_U16,
     MREG_TYPE_U32
 } mreg_type_t;
 
@@ -56,18 +58,26 @@ typedef struct {
     const mreg_desc_t *desc;
 } mreg_array_obj_t;
 
-#define MREG_DIM(a) (sizeof(a) / sizeof((a)[0]))
-#define MREG_TDIM(f) MREG_DIM(((MREG_TYPE *)0)->f)
+#define MREG_LEN(a) (sizeof(a) / sizeof((a)[0]))
+#define MREG_TLEN(f) MREG_LEN(((MREG_TYPE *)0)->f)
 #define MREG_TSTRIDE(f) sizeof(((MREG_TYPE *)0)->f[0])
+#define MREG_ITEM_U8(a,f) {#f, MREG_OFF(a[0].f) - MREG_OFF(a[0]), {MREG_TYPE_U8, 0, 0, 0}}
+#define MREG_ITEM_U16(a,f) {#f, MREG_OFF(a[0].f) - MREG_OFF(a[0]), {MREG_TYPE_U16, 0, 0, 0}}
 #define MREG_ITEM_U32(a,f) {#f, MREG_OFF(a[0].f) - MREG_OFF(a[0]), {MREG_TYPE_U32, 0, 0, 0}}
-#define MREG_ITEM_STRUCT(s,f,d) {#f, MREG_OFF(s.f) - MREG_OFF(a.s), {MREG_TYPE_STRUCT, MREG_TDIM(f), MREG_TSTRIDE(f), d}}
+#define MREG_ITEM_STRUCT(s,f,d) {#f, MREG_OFF(s.f) - MREG_OFF(a.s), {MREG_TYPE_STRUCT, MREG_TLEN(f), MREG_TSTRIDE(f), d}}
 #define MREG_OFF(f) offsetof(MREG_TYPE, f)
+#define MREG_U8(f) {#f, MREG_OFF(f), {MREG_TYPE_U8, 0, 0, 0}}
+#define MREG_U16(f) {#f, MREG_OFF(f), {MREG_TYPE_U16, 0, 0, 0}}
 #define MREG_U32(f) {#f, MREG_OFF(f), {MREG_TYPE_U32, 0, 0, 0}}
 #define MREG_STRUCT(f,d) {#f, MREG_OFF(f), {MREG_TYPE_STRUCT, 0, 0, d}}
+#define MREG_ARRAY_U8_N(f,n) {#f, MREG_OFF(f), {MREG_TYPE_U8, n, 0, 0}}
+#define MREG_ARRAY_U16_N(f,n) {#f, MREG_OFF(f), {MREG_TYPE_U16, n, 0, 0}}
 #define MREG_ARRAY_U32_N(f,n) {#f, MREG_OFF(f), {MREG_TYPE_U32, n, 0, 0}}
-#define MREG_ARRAY_U32(f) MREG_ARRAY_U32_N(f,MREG_TDIM(f))
+#define MREG_ARRAY_U8(f) MREG_ARRAY_U8_N(f,MREG_TLEN(f))
+#define MREG_ARRAY_U16(f) MREG_ARRAY_U16_N(f,MREG_TLEN(f))
+#define MREG_ARRAY_U32(f) MREG_ARRAY_U32_N(f,MREG_TLEN(f))
 #define MREG_ARRAY_STRUCT_N(f,d,n) {#f, MREG_OFF(f), {MREG_TYPE_STRUCT, n, MREG_OFF(f[1]) - MREG_OFF(f[0]), d}}
-#define MREG_ARRAY_STRUCT(f,d) MREG_ARRAY_STRUCT_N(f,d,MREG_TDIM(f))
+#define MREG_ARRAY_STRUCT(f,d) MREG_ARRAY_STRUCT_N(f,d,MREG_TLEN(f))
 
 extern const mp_obj_type_t mreg_struct_type;
 extern const mp_obj_type_t mreg_array_type;
