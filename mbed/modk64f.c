@@ -27,6 +27,84 @@
 #include "MK64F12.h"
 
 /*-----------------------------------------------------------------------
+ *      DMA
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE DMA_Type
+STATIC const mreg_field_t k64f_DMA_TCD_fields[] = {
+    MREG_ITEM_U32(TCD, SADDR),
+    MREG_ITEM_U16(TCD, SOFF),
+    MREG_ITEM_U16(TCD, ATTR),
+    MREG_ITEM_U32(TCD, NBYTES_MLNO),
+    MREG_ITEM_U32(TCD, SLAST),
+    MREG_ITEM_U32(TCD, DADDR),
+    MREG_ITEM_U16(TCD, DOFF),
+    MREG_ITEM_U16(TCD, CITER_ELINKNO),
+    MREG_ITEM_U32(TCD, DLAST_SGA),
+    MREG_ITEM_U16(TCD, CSR),
+    MREG_ITEM_U16(TCD, BITER_ELINKNO),
+    {0},
+};
+
+STATIC const mreg_field_t k64f_DMA_fields[] = {
+    MREG_U32(CR),
+    MREG_U32(ES),
+    MREG_U32(ERQ),
+    MREG_U32(EEI),
+    // __O U8(CEEI),
+    // __O U8(SEEI),
+    // __O U8(CERQ),
+    // __O U8(SERQ),
+    // __O U8(CDNE),
+    // __O U8(SSRT),
+    // __O U8(CEEE),
+    // __O U8(CINT),
+    MREG_U32(INT),
+    MREG_U32(ERR),
+    MREG_U32(HRS),
+    MREG_U8(DCHPRI3),
+    MREG_U8(DCHPRI2),
+    MREG_U8(DCHPRI1),
+    MREG_U8(DCHPRI0),
+    MREG_U8(DCHPRI7),
+    MREG_U8(DCHPRI6),
+    MREG_U8(DCHPRI5),
+    MREG_U8(DCHPRI4),
+    MREG_U8(DCHPRI11),
+    MREG_U8(DCHPRI10),
+    MREG_U8(DCHPRI9),
+    MREG_U8(DCHPRI8),
+    MREG_U8(DCHPRI15),
+    MREG_U8(DCHPRI14),
+    MREG_U8(DCHPRI13),
+    MREG_U8(DCHPRI12),
+    MREG_ARRAY_STRUCT(TCD, k64f_DMA_TCD_fields),
+    {0},
+};
+#undef MREG_TYPE
+
+const mreg_struct_obj_t k64f_DMA_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)DMA0,
+    .fields = k64f_DMA_fields,
+};
+
+/*-----------------------------------------------------------------------
+ *      DMAMUX
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE DMAMUX_Type
+STATIC const mreg_field_t k64f_DMAMUX_fields[] = {
+    MREG_ARRAY_U8(CHCFG),
+    {0},
+};
+
+const mreg_struct_obj_t k64f_DMAMUX_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)DMAMUX,
+    .fields = k64f_DMAMUX_fields,
+};
+#undef MREG_TYPE
+
+/*-----------------------------------------------------------------------
  *      FTM
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE FTM_Type
@@ -202,6 +280,8 @@ const mreg_struct_obj_t k64f_SIM_obj = {
  *-----------------------------------------------------------------------*/
 STATIC const mp_rom_map_elem_t k64f_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_mreg) },
+    { MP_ROM_QSTR(MP_QSTR_DMA), MP_ROM_PTR(&k64f_DMA_obj) },
+    { MP_ROM_QSTR(MP_QSTR_DMAMUX), MP_ROM_PTR(&k64f_DMAMUX_obj) },
     { MP_ROM_QSTR(MP_QSTR_FTM0), MP_ROM_PTR(&k64f_FTM0_obj) },
     { MP_ROM_QSTR(MP_QSTR_FTM1), MP_ROM_PTR(&k64f_FTM1_obj) },
     { MP_ROM_QSTR(MP_QSTR_FTM2), MP_ROM_PTR(&k64f_FTM2_obj) },
