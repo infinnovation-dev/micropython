@@ -168,6 +168,51 @@ const mreg_struct_obj_t k64f_FTM3_obj = {
 };
 
 /*-----------------------------------------------------------------------
+ *      GPIO
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE GPIO_Type
+const mreg_field_t k64f_GPIO_fields[] = {
+    MREG_U32(PDOR),
+    MREG_U32(PSOR),                     /* __O */
+    MREG_U32(PCOR),                     /* __O */
+    MREG_U32(PTOR),                     /* __O */
+    MREG_U32(PDIR),                     /* __I */
+    MREG_U32(PDDR),
+    {0},
+};
+#undef MREG_TYPE
+
+const mreg_struct_obj_t k64f_PTA_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)PTA,
+    .fields = k64f_GPIO_fields,
+};
+
+const mreg_struct_obj_t k64f_PTB_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)PTB,
+    .fields = k64f_GPIO_fields,
+};
+
+const mreg_struct_obj_t k64f_PTC_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)PTC,
+    .fields = k64f_GPIO_fields,
+};
+
+const mreg_struct_obj_t k64f_PTD_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)PTD,
+    .fields = k64f_GPIO_fields,
+};
+
+const mreg_struct_obj_t k64f_PTE_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)PTE,
+    .fields = k64f_GPIO_fields,
+};
+
+/*-----------------------------------------------------------------------
  *      PIT
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE PIT_Type
@@ -292,6 +337,11 @@ STATIC const mp_rom_map_elem_t k64f_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_PORTC), MP_ROM_PTR(&k64f_PORTC_obj) },
     { MP_ROM_QSTR(MP_QSTR_PORTD), MP_ROM_PTR(&k64f_PORTD_obj) },
     { MP_ROM_QSTR(MP_QSTR_PORTE), MP_ROM_PTR(&k64f_PORTE_obj) },
+    { MP_ROM_QSTR(MP_QSTR_PTA), MP_ROM_PTR(&k64f_PTA_obj) },
+    { MP_ROM_QSTR(MP_QSTR_PTB), MP_ROM_PTR(&k64f_PTB_obj) },
+    { MP_ROM_QSTR(MP_QSTR_PTC), MP_ROM_PTR(&k64f_PTC_obj) },
+    { MP_ROM_QSTR(MP_QSTR_PTD), MP_ROM_PTR(&k64f_PTD_obj) },
+    { MP_ROM_QSTR(MP_QSTR_PTE), MP_ROM_PTR(&k64f_PTE_obj) },
     { MP_ROM_QSTR(MP_QSTR_SIM), MP_ROM_PTR(&k64f_SIM_obj) },
 };
 
