@@ -36,7 +36,7 @@ QSTRSRC =	../py/qstrdefs.h \
 		$(PORTSRC) \
 		mbedpins.h
 
-all:		mbedpins.h qstrdefscond.h
+all:		mbedpins.h qstrdefscond.h build/genhdr/mpversion.h
 
 mbedpins.h:	makembedpins.py
 	python makembedpins.py -d $(foreach t,$(PINS_TARGETS),$(t):$(MBED_HAL)/$(PINS_PATH_$(t))/PinNames.h) > $@
