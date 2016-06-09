@@ -27,6 +27,38 @@
 #include "MK64F12.h"
 
 /*-----------------------------------------------------------------------
+ *      DAC
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE DAC_Type
+STATIC const mreg_field_t k64f_DAC_DAT_fields[] = {
+    MREG_ITEM_U8(DAT, DATL),
+    MREG_ITEM_U8(DAT, DATH),
+    {0}
+};
+
+STATIC const mreg_field_t k64f_DAC_fields[] = {
+    MREG_ARRAY_STRUCT(DAT, k64f_DAC_DAT_fields),
+    MREG_U8(SR),
+    MREG_U8(C0),
+    MREG_U8(C1),
+    MREG_U8(C2),
+    {0},
+};
+#undef MREG_TYPE
+
+const mreg_struct_obj_t k64f_DAC0_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)DAC0,
+    .fields = k64f_DAC_fields,
+};
+
+const mreg_struct_obj_t k64f_DAC1_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)DAC1,
+    .fields = k64f_DAC_fields,
+};
+
+/*-----------------------------------------------------------------------
  *      DMA
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE DMA_Type
@@ -321,10 +353,88 @@ const mreg_struct_obj_t k64f_SIM_obj = {
 };
 
 /*-----------------------------------------------------------------------
+ *      UART
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE UART_Type
+const mreg_field_t k64f_UART_fields[] = {
+    MREG_U8(BDH),
+    MREG_U8(BDL),
+    MREG_U8(C1),
+    MREG_U8(C2),
+    MREG_U8(S1),
+    MREG_U8(S2),
+    MREG_U8(C3),
+    MREG_U8(D),
+    MREG_U8(MA1),
+    MREG_U8(MA2),
+    MREG_U8(C4),
+    MREG_U8(C5),
+    MREG_U8(ED),
+    MREG_U8(MODEM),
+    MREG_U8(IR),
+    MREG_U8(PFIFO),
+    MREG_U8(CFIFO),
+    MREG_U8(SFIFO),
+    MREG_U8(TWFIFO),
+    MREG_U8(TCFIFO),
+    MREG_U8(RWFIFO),
+    MREG_U8(RCFIFO),
+    MREG_U8(C7816),
+    MREG_U8(IE7816),
+    MREG_U8(IS7816),
+    MREG_U8(WP7816T0),
+    MREG_U8(WP7816T1),
+    MREG_U8(WN7816),
+    MREG_U8(WF7816),
+    MREG_U8(ET7816),
+    MREG_U8(TL7816),
+    {0}
+};
+#undef MREG_TYPE
+
+const mreg_struct_obj_t k64f_UART0_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)UART0,
+    .fields = k64f_UART_fields,
+};
+
+const mreg_struct_obj_t k64f_UART1_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)UART1,
+    .fields = k64f_UART_fields,
+};
+
+const mreg_struct_obj_t k64f_UART2_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)UART2,
+    .fields = k64f_UART_fields,
+};
+
+const mreg_struct_obj_t k64f_UART3_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)UART3,
+    .fields = k64f_UART_fields,
+};
+
+const mreg_struct_obj_t k64f_UART4_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)UART4,
+    .fields = k64f_UART_fields,
+};
+
+const mreg_struct_obj_t k64f_UART5_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)UART5,
+    .fields = k64f_UART_fields,
+};
+
+/*-----------------------------------------------------------------------
  *      Module
  *-----------------------------------------------------------------------*/
 STATIC const mp_rom_map_elem_t k64f_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_mreg) },
+    { MP_ROM_QSTR(MP_QSTR_DAC0), MP_ROM_PTR(&k64f_DAC0_obj) },
+    { MP_ROM_QSTR(MP_QSTR_DAC1), MP_ROM_PTR(&k64f_DAC1_obj) },
     { MP_ROM_QSTR(MP_QSTR_DMA), MP_ROM_PTR(&k64f_DMA_obj) },
     { MP_ROM_QSTR(MP_QSTR_DMAMUX), MP_ROM_PTR(&k64f_DMAMUX_obj) },
     { MP_ROM_QSTR(MP_QSTR_FTM0), MP_ROM_PTR(&k64f_FTM0_obj) },
@@ -343,6 +453,12 @@ STATIC const mp_rom_map_elem_t k64f_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_PTD), MP_ROM_PTR(&k64f_PTD_obj) },
     { MP_ROM_QSTR(MP_QSTR_PTE), MP_ROM_PTR(&k64f_PTE_obj) },
     { MP_ROM_QSTR(MP_QSTR_SIM), MP_ROM_PTR(&k64f_SIM_obj) },
+    { MP_ROM_QSTR(MP_QSTR_UART0), MP_ROM_PTR(&k64f_UART0_obj) },
+    { MP_ROM_QSTR(MP_QSTR_UART1), MP_ROM_PTR(&k64f_UART1_obj) },
+    { MP_ROM_QSTR(MP_QSTR_UART2), MP_ROM_PTR(&k64f_UART2_obj) },
+    { MP_ROM_QSTR(MP_QSTR_UART3), MP_ROM_PTR(&k64f_UART3_obj) },
+    { MP_ROM_QSTR(MP_QSTR_UART4), MP_ROM_PTR(&k64f_UART4_obj) },
+    { MP_ROM_QSTR(MP_QSTR_UART5), MP_ROM_PTR(&k64f_UART5_obj) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(k64f_module_globals,
