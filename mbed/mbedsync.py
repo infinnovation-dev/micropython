@@ -31,12 +31,22 @@ from __future__ import print_function
 import os
 import difflib
 import shutil
+import subprocess
 
 # Default locations
 GITDIR = '/home/colin/micropython'
-LIBDIR = '/home/colin/mbed/micropython-dev'
-REPLDIR = '/home/colin/mbed/micropython-repl'
+HGPARENT = '/home/colin/mbed'
+branch = subprocess.check_output(['git','rev-parse','--abbrev-ref','HEAD'],
+                                 cwd=GITDIR).strip()
+if branch.startswith('mbed-'):
+    # Each sub-branch has its own hg repo
+    REPLDIR = HGPARENT + '/micropython-' + branch[5:]
+    LIBDIR = REPLDIR + '/micropython'
+else:
+    LIBDIR = HGPARENT + '/micropython-dev'
+    REPLDIR = HGPARENT + '/micropython-repl'
 
+# Sets of files to be synced
 extmod_files = ('machine_mem.h',
                 'machine_mem.c')
 
