@@ -51,20 +51,17 @@ int mp_hal_stdin_rx_chr(void) {
 // Now the main program - run the REPL.
 int main() {
     mp_init();
-    while (1) {
-      int ret;
-      if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
-	ret = pyexec_friendly_repl();
-      } else {
-	ret = pyexec_raw_repl();
-      }
-      if (ret == PYEXEC_FORCED_EXIT) {
-	mp_hal_stdout_tx_strn("FORCED EXIT\r\n", 13);
-	break;
-      } else if (ret != 0) {
-	mp_hal_stdout_tx_strn("EXIT\r\n", 13);
-	break;
-      }
+    pyexec_event_repl_init();
+    while (true) {
+        int ch = pc.getc();
+        int ret = pyexec_event_repl_process_char(ch);
+        if (ret == PYEXEC_FORCED_EXIT) {
+            mp_hal_stdout_tx_strn("FORCED EXIT\r\n", 13);
+            break;
+        } else if (ret != 0) {
+            mp_hal_stdout_tx_strn("EXIT\r\n", 13);
+            break;
+        }
     }
     mp_deinit();
     return 0;
