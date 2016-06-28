@@ -51,7 +51,7 @@ extern int mp__printf(const char *, ...);
 #define MICROPY_MEM_STATS           (0)
 #define MICROPY_DEBUG_PRINTERS      (0)
 #define MICROPY_ENABLE_GC           (0)
-#define MICROPY_REPL_EVENT_DRIVEN   (0)
+#define MICROPY_REPL_EVENT_DRIVEN   (1)
 #define MICROPY_HELPER_REPL         (1)
 #define MICROPY_HELPER_LEXER_UNIX   (0)
 #define MICROPY_ENABLE_SOURCE_LINE  (0)
@@ -140,4 +140,6 @@ extern const struct _mp_obj_module_t mp_module_pins;
 
 // Use by readline.c
 #define MICROPY_PORT_ROOT_POINTERS \
-    const char *readline_hist[8];
+    const char *readline_hist[8]; \
+    vstr_t *repl_line; \
+
