@@ -23,7 +23,7 @@ PINS_PATH_NUCLEO_F401RE = TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F401RE
 PYSRC = $(wildcard ../py/*.c)
 EXTMODSRC = ../extmod/machine_mem.c
 MPLIBSRC = ../lib/utils/pyexec.c ../lib/utils/pyhelp.c ../lib/mp-readline/readline.c
-PORTSRC = modmachine.c modmbed.c modpins.c modk64f.c mreg.c
+PORTSRC = modmachine.c modmbed.c modpins.c modk64f.c mreg.c mpc.c
 REPLSRC = main.cpp help.c
 
 # Files containing MP_QSTR_ to be processed by makeqstrcond

@@ -32,6 +32,7 @@ extern "C" {
 #include "py/runtime.h"
 #include "py/mphal.h"
 #include "lib/utils/pyexec.h"
+#include "mpc.h"
 }
 
 // Serial communication to host PC via USB
@@ -48,8 +49,11 @@ int mp_hal_stdin_rx_chr(void) {
     return c;
 }
 
+MPC_VOIDFUNC_3(printf, STRING, INT, STRING);
+
 // Now the main program - run the REPL.
 int main() {
+    mpc_add_func("printf", mpc_f_printf);
     mp_init();
     pyexec_event_repl_init();
     while (true) {
