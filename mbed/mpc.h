@@ -89,6 +89,7 @@ extern void mpc_add_struct(const char */*name*/, const void */*addr*/,
                            const mreg_field_t *);
 
 extern void mpc_populate(mp_obj_t /*dict*/);
+extern void mpc_populate_globals(void);
 
 /*--- Internals */
 #define MPC_L1(s1) {s1}

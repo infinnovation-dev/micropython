@@ -38,13 +38,17 @@ GITDIR = '/home/colin/micropython'
 HGPARENT = '/home/colin/mbed'
 branch = subprocess.check_output(['git','rev-parse','--abbrev-ref','HEAD'],
                                  cwd=GITDIR).strip()
-if branch.startswith('mbed-'):
+assert branch[:5] == 'mbed-'
+if branch[:5] == 'release':
+    LIBDIR = HGPARENT + '/micropython'
+    REPLDIR = HGPARENT + '/micropython-repl'
+elif branch[5:] == 'prerel':
+    LIBDIR = HGPARENT + '/micropython-dev'
+    REPLDIR = HGPARENT + '/micropython-repl-dev'
+else:
     # Each sub-branch has its own hg repo
     REPLDIR = HGPARENT + '/micropython-' + branch[5:]
     LIBDIR = REPLDIR + '/micropython'
-else:
-    LIBDIR = HGPARENT + '/micropython-dev'
-    REPLDIR = HGPARENT + '/micropython-repl'
 
 # Sets of files to be synced
 extmod_files = ('machine_mem.h',
@@ -68,6 +72,8 @@ mbed_lib_files = ('modmachine.c',
                   'mreg.c',
                   'mpc.h',
                   'mpc.c',
+                  'mprepl.h',
+                  'mprepl.cpp',
                   'mpconfigport.h',
                   'mphalport.c',
                   'mphalport.h',

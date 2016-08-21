@@ -22,32 +22,36 @@
  * THE SOFTWARE.
  */
 
-/**
- * A read-eval-print-loop for micropython on the mbed platform.
- *
- * The USB serial link is used.
- */
+// Micropython REPL with multiple I/O channels
+
+#ifndef __MICROPY_INCLUDED_MPREPL_H
+#define __MICROPY_INCLUDED_MPREPL_H
+
+#ifdef  __cplusplus
 #include "mbed.h"
 extern "C" {
-#include "py/runtime.h"
-#include "py/mphal.h"
-#include "lib/utils/pyexec.h"
-#include "mpc.h"
+#endif
+
+#include <stdlib.h>
+
+typedef void (mprepl_outfunc_t)(void *, const char *, size_t);
+
+extern void mprepl_input_char(char);
+extern void mprepl_reset(void);
+extern void mprepl_add_client(mprepl_outfunc_t *, void *);
+extern void mprepl_remove_client(mprepl_outfunc_t *, void *);
+extern int mprepl_run(void);
+
+// mbed-specific
+extern void mprepl_add_serial(serial_t *);
+#ifdef  __cplusplus
+extern void mprepl_add_Serial(Serial &);
+extern void mprepl_add_TCPSocket(TCPSocket &);
+extern void mprepl_start_TCPServer(NetworkInterface *, int /*port*/);
+#endif
+
+#ifdef  __cplusplus
 }
-#include "mprepl.h"
+#endif
 
-// Serial communication to host PC via USB
-Serial pc(USBTX, USBRX);
-
-MPC_VOIDFUNC_3(printf, STRING, INT, STRING);
-
-// Now the main program - run the REPL.
-int main() {
-    mpc_add_func("printf", mpc_f_printf);
-    mp_init();
-    mpc_populate_globals();
-    mprepl_add_Serial(pc);
-    mprepl_run();
-    mp_deinit();
-    return 0;
-}
+#endif // __MICROPY_INCLUDED_MPREPL_H

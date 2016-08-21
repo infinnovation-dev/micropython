@@ -153,6 +153,11 @@ mpc_populate(mp_obj_t ns) {
 }
 
 void
+mpc_populate_globals(void) {
+    mpc_populate(MP_OBJ_FROM_PTR(mp_globals_get()));
+}
+
+void
 mpc_in(size_t n_defs, const mpc_argdef_t *argdefs, mpc_val_t *vals,
        size_t n_args, const mp_obj_t *args) {
     unsigned i;
