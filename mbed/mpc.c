@@ -166,8 +166,6 @@ mpc_in(size_t n_defs, const mpc_argdef_t *argdefs, mpc_val_t *vals,
     for (i = 1; i < n_defs; i++) {
         if (argdefs[i].type & MPC_OUT) {
             ;
-        } else if (argdefs[i].type == MPC_TYPE_CHARBUF) {
-            ;
         } else {
             ++ nexp;
         }
@@ -177,8 +175,9 @@ mpc_in(size_t n_defs, const mpc_argdef_t *argdefs, mpc_val_t *vals,
     for (i = 1; i < n_defs; i++) {
         if (argdefs[i].type & MPC_OUT) {
             // Output
-        } else if (argdefs[i].type == MPC_TYPE_CHARBUF) {
-            vals[i].buf = (char *) m_malloc(argdefs[i].u.size);
+            if ((argdefs[i].type & ~ MPC_OUT) == MPC_TYPE_CHARBUF) {
+                vals[i].buf = (char *) m_malloc(argdefs[i].u.size);
+            }
         } else {
             switch (argdefs[i].type) {
             case MPC_TYPE_INT8:
@@ -211,6 +210,8 @@ mpc_in(size_t n_defs, const mpc_argdef_t *argdefs, mpc_val_t *vals,
             case MPC_TYPE_PTR:
                 vals[i].p = (void *) mp_obj_get_int(args[iarg]);
                 break;
+            case MPC_TYPE_CHARBUF:      // Not valid as input
+                break;
             }
             ++ iarg;
         }
@@ -226,8 +227,6 @@ mpc_out(size_t n_defs, const mpc_argdef_t *argdefs, mpc_val_t *vals) {
     // Count outputs
     for (i=0; i < n_defs; i++) {
         if (argdefs[i].type & MPC_OUT) {
-            ++ nvals;
-        } else if (argdefs[i].type == MPC_TYPE_CHARBUF) {
             ++ nvals;
         }
     }
@@ -267,10 +266,11 @@ mpc_out(size_t n_defs, const mpc_argdef_t *argdefs, mpc_val_t *vals) {
             case MPC_TYPE_STRING:
                 objs[iobj++] = mp_obj_new_str(vals[i].s, strlen(vals[i].s), 0);
                 break;
+            case MPC_TYPE_CHARBUF:
+                objs[iobj++] = mp_obj_new_str(vals[i].buf, strlen(vals[i].buf), 0);
+                m_free(vals[i].buf);
+                break;
             }
-        } else if (i != 0 && defs[i].type == MPC_TYPE_CHARBUF) {
-            objs[iobj++] = mp_obj_new_str(vals[i].buf, strlen(vals[i].buf), 0);
-            m_free(vals[i].buf);
         }
     }
     if (nvals == 0) {

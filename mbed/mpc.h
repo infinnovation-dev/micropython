@@ -71,15 +71,15 @@ typedef union {
 } mpc_val_t;
 
 /* User-callable */
-#define MPC_FUNC_0(r,n) MPC__FUNC(n,MPC_L1(MPC_ARG_O_##r), *MPC_VAL_##r(_a[0]) = n())
-#define MPC_FUNC_1(r,n,t1) MPC__FUNC(n,MPC_L2(MPC_ARG_O_##r,MPC_ARG_##t1), *MPC_VAL_##r(_a[0]) = n(t1MPC_VAL_##(_a[1])))
-#define MPC_FUNC_2(r,n,t1,t2) MPC__FUNC(n,MPC_L3(MPC_ARG_O_##r,MPC_ARG_##t1,MPC_ARG_##t2), *MPC_VAL_##r(_a[0]) = n(MPC_VAL_##t1(_a[1]),MPC_VAL_##t2(_a[2])))
-#define MPC_FUNC_3(r,n,t1,t2,t3) MPC__FUNC(n,MPC_L4(MPC_ARG_O_##r,MPC_ARG_##t1,MPC_ARG_##t2,MPC_ARG_##t3), *MPC_VAL_##r(_a[0]) = n(MPC_VAL_##t1(_a[1]),MPC_VAL_##t2(_a[2]),MPC_VAL_##t3(_a[3])))
+#define MPC_FUNC_0(r,n) MPC__FUNC(n,MPC_L1(MPC_ARG_O_##r), *MPC_VAL_O_##r(_a[0]) = n())
+#define MPC_FUNC_1(r,n,t1) MPC__FUNC(n,MPC_L2(MPC_ARG_O_##r,MPC_ARG_##t1), *MPC_VAL_O_##r(_a[0]) = n(t1MPC_VAL_##(_a[1])))
+#define MPC_FUNC_2(r,n,t1,t2) MPC__FUNC(n,MPC_L3(MPC_ARG_O_##r,MPC_ARG_##t1,MPC_ARG_##t2), *MPC_VAL_O_##r(_a[0]) = n(MPC_VAL_##t1(_a[1]),MPC_VAL_##t2(_a[2])))
+#define MPC_FUNC_3(r,n,t1,t2,t3) MPC__FUNC(n,MPC_L4(MPC_ARG_O_##r,MPC_ARG_##t1,MPC_ARG_##t2,MPC_ARG_##t3), *MPC_VAL_O_##r(_a[0]) = n(MPC_VAL_##t1(_a[1]),MPC_VAL_##t2(_a[2]),MPC_VAL_##t3(_a[3])))
 
 #define MPC_VOIDFUNC_0(n) MPC__FUNC0(n)
-#define MPC_VOIDFUNC_1(n,t1) MPC__FUNC(n,MPC_L1(MPC_ARG_##t1), n(MPC_VAL_##t1(_a[1])))
-#define MPC_VOIDFUNC_2(n,t1,t2) MPC__FUNC(n,MPC_L2(MPC_ARG_##t1,MPC_ARG_##t2), n(MPC_VAL_##t1(_a[1]),MPC_VAL_##t2(_a[2])))
-#define MPC_VOIDFUNC_3(n,t1,t2,t3) MPC__FUNC(n,MPC_L3(MPC_ARG_##t1,MPC_ARG_##t2,MPC_ARG_##t3), n(MPC_VAL_##t1(_a[1]),MPC_VAL_##t2(_a[2]),MPC_VAL_##t3(_a[3])))
+#define MPC_VOIDFUNC_1(n,t1) MPC__FUNC(n,MPC_L1(MPC_ARG_##t1), n(MPC_VAL_##t1(_a[0])))
+#define MPC_VOIDFUNC_2(n,t1,t2) MPC__FUNC(n,MPC_L2(MPC_ARG_##t1,MPC_ARG_##t2), n(MPC_VAL_##t1(_a[0]),MPC_VAL_##t2(_a[1])))
+#define MPC_VOIDFUNC_3(n,t1,t2,t3) MPC__FUNC(n,MPC_L3(MPC_ARG_##t1,MPC_ARG_##t2,MPC_ARG_##t3), n(MPC_VAL_##t1(_a[0]),MPC_VAL_##t2(_a[1]),MPC_VAL_##t3(_a[2])))
 
 extern void mpc_add_func(const char */*name*/, mp_fun_var_t /*wrapper*/);
 extern void mpc_add_int(const char */*name*/, int);
@@ -108,22 +108,23 @@ extern void mpc_populate_globals(void);
 #define MPC_ARG_FLOAT {MPC_TYPE_FLOAT}
 #define MPC_ARG_DOUBLE {MPC_TYPE_DOUBLE}
 #define MPC_ARG_STRING {MPC_TYPE_STRING}
-#define MPC_ARG_CHARBUF(n) MPC_L2(MPC_TYPE_CHARBUF, {.size = (n)})
+#define MPC_ARG_CHARBUF(n) MPC_L2((mpc_type_t)(MPC_OUT | MPC_TYPE_CHARBUF), {.size = (n)})
 #define MPC_ARG_PTR {MPC_TYPE_PTR}
-#define MPC_ARG_O_INT8 {MPC_OUT | MPC_TYPE_INT8}
-#define MPC_ARG_O_INT16 {MPC_OUT | MPC_TYPE_INT16}
-#define MPC_ARG_O_INT32 {MPC_OUT | MPC_TYPE_INT32}
-#define MPC_ARG_O_UINT {MPC_OUT | MPC_TYPE_UINT}
-#define MPC_ARG_O_UINT8 {MPC_OUT | MPC_TYPE_UINT8}
-#define MPC_ARG_O_UINT16 {MPC_OUT | MPC_TYPE_UINT16}
-#define MPC_ARG_O_UINT32 {MPC_OUT | MPC_TYPE_UINT32}
-#define MPC_ARG_O_FLOAT {MPC_OUT | MPC_TYPE_FLOAT}
-#define MPC_ARG_O_DOUBLE {MPC_OUT | MPC_TYPE_DOUBLE}
-#define MPC_ARG_O_STRING {MPC_OUT | MPC_TYPE_STRING}
-#define MPC_ARG_O_PTR {MPC_OUT | MPC_TYPE_PTR}
+#define MPC_ARG_O_INT8 {(mpc_type_t)(MPC_OUT | MPC_TYPE_INT8)}
+#define MPC_ARG_O_INT16 {(mpc_type_t)(MPC_OUT | MPC_TYPE_INT16)}
+#define MPC_ARG_O_INT32 {(mpc_type_t)(MPC_OUT | MPC_TYPE_INT32)}
+#define MPC_ARG_O_UINT8 {(mpc_type_t)(MPC_OUT | MPC_TYPE_UINT8)}
+#define MPC_ARG_O_UINT16 {(mpc_type_t)(MPC_OUT | MPC_TYPE_UINT16)}
+#define MPC_ARG_O_UINT32 {(mpc_type_t)(MPC_OUT | MPC_TYPE_UINT32)}
+#define MPC_ARG_O_FLOAT {(mpc_type_t)(MPC_OUT | MPC_TYPE_FLOAT)}
+#define MPC_ARG_O_DOUBLE {(mpc_type_t)(MPC_OUT | MPC_TYPE_DOUBLE)}
+#define MPC_ARG_O_STRING {(mpc_type_t)(MPC_OUT | MPC_TYPE_STRING)}
+#define MPC_ARG_O_PTR {(mpc_type_t)(MPC_OUT | MPC_TYPE_PTR)}
 
 #define MPC_ARG_INT MPC_ARG_INT32
 #define MPC_ARG_UINT MPC_ARG_UINT32
+#define MPC_ARG_O_INT MPC_ARG_O_INT32
+#define MPC_ARG_O_UINT MPC_ARG_O_UINT32
 
 #define MPC_VAL_INT8(a) ((a).i8)
 #define MPC_VAL_INT16(a) ((a).i16)
@@ -167,7 +168,7 @@ static mp_obj_t mpc_f_##n(size_t n_args, const mp_obj_t *args) {        \
 #define MPC__FUNC0(n)                                                   \
     static mp_obj_t mpc_f_##n(size_t n_args, const mp_obj_t *args) {    \
     mp_arg_check_num(n_args, 0, 0, 0, 0);                               \
-    cs;                                                                 \
+    n();                                                               \
     return mp_const_none;                                               \
 }
 
