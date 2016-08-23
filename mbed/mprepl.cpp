@@ -35,18 +35,11 @@ extern "C" {
 
 Mutex _lock_mutex;
 
+#if 0
 #define LOGF(...) do {_lock_mutex.lock(); printf(__VA_ARGS__); _lock_mutex.unlock();} while (0)
-
-//extern "C" {
-//void LOGF(f, ...) {
-//    va_args ap;
-//    _lock_mutex.lock();
-//    va_start(ap, f);
-//    vprintf(f, ap);
-//    va_end(ap);
-//    _lock_mutex.unlock();
-//}
-//}
+#else
+#define LOGF(...)
+#endif
 
 class MpReplClient {
 public:
@@ -121,11 +114,8 @@ _mprepl_serial_output(void *handle, const char *str, size_t len) {
 static void
 _mprepl_serial_input(serial_t *serial) {
     while (true) {
-        while (! serial_readable(serial)) {
-            Thread::yield();
-        }
         int c = serial_getc(serial);
-        _repl.input_queue.put((void *)c);
+        mprepl_input_char(c);
     }
 }
 
@@ -142,20 +132,30 @@ mprepl_add_serial(serial_t *serial) {
 static void
 _mprepl_Serial_output(void *handle, const char *str, size_t len) {
     Serial *serial = (Serial *)handle;
-    serial->printf("%.*s", len, str);
+    LOGF("mprepl_Serial_output %d:%.*s\r\n", (int)len, (int)len, str);
+    while (len--) {
+        while (! serial->writeable()) {
+            Thread::yield();
+        }
+        serial->putc(*str++);
+    }
 }
 
 static void
 _mprepl_Serial_input(Serial *serial) {
+    LOGF("Serial_input\r\n");
     while (true) {
+        while (! serial->readable()) {
+            Thread::yield();
+        }
         int c = serial->getc();
-        _repl.input_queue.put((void *)c);
+        mprepl_input_char(c);
     }
 }
 
 void
 mprepl_add_Serial(Serial &serial) {
-    mprepl_add_client(_mprepl_Serial_output, serial);
+    mprepl_add_client(_mprepl_Serial_output, &serial);
     Thread *serial_thread = new Thread();
     serial_thread->start(Callback<void()>(&serial, _mprepl_Serial_input));
 }
@@ -179,7 +179,7 @@ _mprepl_TCPSocket_input(TCPSocket *socket) {
         int ret = socket->recv(&c, 1);
         LOGF("recv=%d\r\n", ret);
         if (ret == 1) {
-            _repl.input_queue.put((void *)(int)c);
+            mprepl_input_char(c);
         } else {
             if (ret < 0) {
                 // report
@@ -236,11 +236,14 @@ int
 mprepl_run(void) {
     while (1) {
         int ret;
+        LOGF("pyexec_mode_kind=%d\r\n", pyexec_mode_kind);
         if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
+            LOGF("(friendly...\r\n");
             ret = pyexec_friendly_repl();
         } else {
             ret = pyexec_raw_repl();
         }
+        LOGF("ret=%d\r\n", ret);
         if (ret == PYEXEC_FORCED_EXIT) {
             mp_hal_stdout_tx_strn("FORCED EXIT\r\n", 13);
             break;
@@ -273,7 +276,6 @@ int mp_hal_stdin_rx_chr(void) {
         int c = event.value.v;
         return c;
     } else {
-        // ser_printf(&pc, "input_queue status=%#x\n", event.status);
         return -1;
     }
 }

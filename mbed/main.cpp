@@ -43,6 +43,7 @@ MPC_VOIDFUNC_3(printf, STRING, INT, STRING);
 
 // Now the main program - run the REPL.
 int main() {
+    pc.printf("micropython-dev %s\r\n", __DATE__);
     mpc_add_func("printf", mpc_f_printf);
     mp_init();
     mpc_populate_globals();
