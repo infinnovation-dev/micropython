@@ -29,7 +29,7 @@
 #if MICROPY_PY_MBED
 
 #include "modmbed_i.h"
-#if MICROPY_MBED_SERIAL
+#if MBED_CONF_MICROPYTHON_WITH_SERIAL
 #include "serial_api.h"
 #endif
 
@@ -42,7 +42,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mbed_wait_ms_obj,
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mbed_wait_us_obj,
                                  mbed_wait_us);
 
-#if MICROPY_MBED_DIGITALOUT
+#if MBED_CONF_MICROPYTHON_WITH_DIGITALOUT
 //-----------------------------------------------------------------------
 //      DigitalOut class
 //-----------------------------------------------------------------------
@@ -70,9 +70,9 @@ const mp_obj_type_t mbed_DigitalOut_type = {
     .locals_dict = (mp_obj_t)&mbed_DigitalOut_locals_dict,
 };
 
-#endif // MICROPY_MBED_DIGITALOUT
+#endif // MBED_CONF_MICROPYTHON_WITH_DIGITALOUT
 
-#if MICROPY_MBED_DIGITALIN
+#if MBED_CONF_MICROPYTHON_WITH_DIGITALIN
 //-----------------------------------------------------------------------
 //      DigitalIn class
 //-----------------------------------------------------------------------
@@ -100,9 +100,9 @@ const mp_obj_type_t mbed_DigitalIn_type = {
     .locals_dict = (mp_obj_t)&mbed_DigitalIn_locals_dict,
 };
 
-#endif // MICROPY_MBED_DIGITALIN
+#endif // MBED_CONF_MICROPYTHON_WITH_DIGITALIN
 
-#if MICROPY_MBED_PWMOUT
+#if MBED_CONF_MICROPYTHON_WITH_PWMOUT
 /*-----------------------------------------------------------------------
  *      PwmOut class
  *-----------------------------------------------------------------------*/
@@ -153,9 +153,9 @@ const mp_obj_type_t mbed_PwmOut_type = {
     .locals_dict = (mp_obj_t)&mbed_PwmOut_locals_dict,
 };
 
-#endif // MICROPY_MBED_PWMOUT
+#endif // MBED_CONF_MICROPYTHON_WITH_PWMOUT
 
-#if MICROPY_MBED_SERIAL
+#if MBED_CONF_MICROPYTHON_WITH_SERIAL
 /*-----------------------------------------------------------------------
  *      Serial class
  *-----------------------------------------------------------------------*/
@@ -198,7 +198,7 @@ const mp_obj_type_t mbed_Serial_type = {
     .locals_dict = (mp_obj_t)&mbed_Serial_locals_dict,
 };
 
-#endif // MICROPY_MBED_SERIAL
+#endif // MBED_CONF_MICROPYTHON_WITH_SERIAL
 
 // Module
 STATIC const mp_rom_map_elem_t mbed_module_globals_table[] = {
@@ -208,20 +208,20 @@ STATIC const mp_rom_map_elem_t mbed_module_globals_table[] = {
 #endif
     { MP_ROM_QSTR(MP_QSTR_wait_ms), MP_ROM_PTR(&mbed_wait_ms_obj) },
     { MP_ROM_QSTR(MP_QSTR_wait_us), MP_ROM_PTR(&mbed_wait_us_obj) },
-#if MICROPY_MBED_DIGITALOUT
+#if MBED_CONF_MICROPYTHON_WITH_DIGITALOUT
     { MP_ROM_QSTR(MP_QSTR_DigitalOut), MP_ROM_PTR(&mbed_DigitalOut_type) },
 #endif
-#if MICROPY_MBED_DIGITALIN
+#if MBED_CONF_MICROPYTHON_WITH_DIGITALIN
     { MP_ROM_QSTR(MP_QSTR_DigitalIn), MP_ROM_PTR(&mbed_DigitalIn_type) },
 #endif
-#if MICROPY_MBED_PWMOUT
+#if MBED_CONF_MICROPYTHON_WITH_PWMOUT
     { MP_ROM_QSTR(MP_QSTR_PwmOut), MP_ROM_PTR(&mbed_PwmOut_type) },
 #endif
-#if MICROPY_MBED_SERIAL
+#if MBED_CONF_MICROPYTHON_WITH_SERIAL
     { MP_ROM_QSTR(MP_QSTR_Serial), MP_ROM_PTR(&mbed_Serial_type) },
 #endif
     // Constants
-#if MICROPY_MBED_DIGITALIN
+#if MBED_CONF_MICROPYTHON_WITH_DIGITALIN
     { MP_ROM_QSTR(MP_QSTR_PullNone), MP_ROM_INT(PullNone) },
     { MP_ROM_QSTR(MP_QSTR_PullUp), MP_ROM_INT(PullUp) },
     // N.B. KL05Z, KL25Z, KL26Z, MAX32600, MAXWSNENV do not have PullDown
@@ -232,7 +232,7 @@ STATIC const mp_rom_map_elem_t mbed_module_globals_table[] = {
     // TODO Some boards have OpenDrain
     // TODO IOTSS, MPS2, MAX32600, MAXWSNENV, LPC15XX have Repeater
 #endif
-#if MICROPY_MBED_SERIAL
+#if MBED_CONF_MICROPYTHON_WITH_SERIAL
     { MP_ROM_QSTR(MP_QSTR_ParityNone), MP_ROM_INT(ParityNone) },
     { MP_ROM_QSTR(MP_QSTR_ParityOdd), MP_ROM_INT(ParityOdd) },
     { MP_ROM_QSTR(MP_QSTR_ParityEven), MP_ROM_INT(ParityEven) },

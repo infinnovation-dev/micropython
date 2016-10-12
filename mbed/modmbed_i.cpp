@@ -103,7 +103,7 @@ mp_obj_t mbed_DigitalOut_is_connected(mp_obj_t self_in) {
     return conn ? mp_const_true : mp_const_false;
 }
 
-#if MICROPY_MBED_DIGITALIN
+#if MBED_CONF_MICROPYTHON_WITH_DIGITALIN
 //-----------------------------------------------------------------------
 // DigitalIn
 //-----------------------------------------------------------------------
@@ -149,9 +149,9 @@ mp_obj_t mbed_DigitalIn_is_connected(mp_obj_t self_in) {
     return conn ? mp_const_true : mp_const_false;
 }
 
-#endif // MICROPY_MBED_DIGITALIN
+#endif // MBED_CONF_MICROPYTHON_WITH_DIGITALIN
 
-#if MICROPY_MBED_PWMOUT
+#if MBED_CONF_MICROPYTHON_WITH_PWMOUT
 //-----------------------------------------------------------------------
 // PwmOut
 //-----------------------------------------------------------------------
@@ -233,7 +233,7 @@ mp_obj_t mbed_PwmOut_pulsewidth_us(mp_obj_t self_in, mp_obj_t us_in) {
     self->po->pulsewidth_us(us);
     return mp_const_none;
 }
-#endif // MICROPY_MBED_PWMOUT
+#endif // MBED_CONF_MICROPYTHON_WITH_PWMOUT
 
 //-----------------------------------------------------------------------
 // Serial

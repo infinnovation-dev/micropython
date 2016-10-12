@@ -24,7 +24,7 @@
 #include "py/mpconfig.h"
 #include "py/runtime.h"
 
-#if MICROPY_PY_PINS
+#if MBED_CONF_MICROPYTHON_WITH_PINS
 
 #include "mbed_interface.h"
 
@@ -42,4 +42,4 @@ const mp_obj_module_t mp_module_pins = {
     .globals = (mp_obj_dict_t *)&mp_pins_module_globals,
 };
 
-#endif // MICROPY_PY_PINS
+#endif // MBED_CONF_MICROPYTHON_WITH_PINS

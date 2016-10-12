@@ -82,13 +82,6 @@ extern int mp__printf(const char *, ...);
 #define MICROPY_PY_MACHINE          (1)
 // Build "mbed" module
 #define MICROPY_PY_MBED             (1)
-// Select which mbed features wanted
-#define MICROPY_MBED_DIGITALOUT     (1)
-#define MICROPY_MBED_DIGITALIN      (1)
-#define MICROPY_MBED_PWMOUT         (1)
-#define MICROPY_MBED_SERIAL         (1)
-// Build "pins" module
-#define MICROPY_PY_PINS             (1)
 // Build "k64f" module
 #if defined(TARGET_K64F)
 #define MICROPY_PY_K64F             (1)
@@ -152,7 +145,7 @@ extern const struct _mp_obj_module_t mp_module_machine;
 #define MICROPY_PY_MACHINE_DEF
 #endif
 
-#if MICROPY_PY_PINS
+#if MBED_CONF_MICROPYTHON_WITH_PINS
 extern const struct _mp_obj_module_t mp_module_pins;
 #define MICROPY_PY_PINS_DEF \
     { MP_ROM_QSTR(MP_QSTR_pins), MP_ROM_PTR(&mp_module_pins) },

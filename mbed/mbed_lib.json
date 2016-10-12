@@ -1,0 +1,25 @@
+{
+    "name": "micropython",
+    "config": {
+	"with-DigitalOut": {
+	    "help": "Enable MicroPython mbed.DigitalOut type",
+	    "value": true
+	},
+	"with-DigitalIn": {
+	    "help": "Enable MicroPython mbed.DigitalIn type",
+	    "value": true
+	},
+	"with-PwmOut": {
+	    "help": "Enable MicroPython mbed.PwmOut type",
+	    "value": true
+	},
+	"with-Serial": {
+	    "help": "Enable MicroPython mbed.Serial type",
+	    "value": true
+	},
+	"with-pins": {
+	    "help": "Enable MicroPython pins module",
+	    "value": true
+	}
+    }
+}

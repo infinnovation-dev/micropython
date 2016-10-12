@@ -87,7 +87,8 @@ mbed_gen_files = (('mbedpins.h','mbedpins.h'),
                   ('qstrdefscond.h','genhdr/qstrdefs.generated.h'),
                   ('build/genhdr/mpversion.h', 'genhdr/mpversion.h'))
 
-other_lib_files = (('README-mbed.md', 'README.md'),)
+other_lib_files = (('README-mbed.md', 'README.md'),
+                   ('mbed_lib.json', 'mbed_lib.json'),)
 
 class MbedSync(object):
     def __init__(self, gitdir, libdir, repldir):
