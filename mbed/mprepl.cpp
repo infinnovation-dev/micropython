@@ -33,9 +33,8 @@ extern "C" {
 #include <stdarg.h>
 }
 
-Mutex _lock_mutex;
-
 #if 0
+Mutex _lock_mutex;
 #define LOGF(...) do {_lock_mutex.lock(); printf(__VA_ARGS__); _lock_mutex.unlock();} while (0)
 #else
 #define LOGF(...)
@@ -114,6 +113,9 @@ _mprepl_serial_output(void *handle, const char *str, size_t len) {
 static void
 _mprepl_serial_input(serial_t *serial) {
     while (true) {
+        while (! serial_readable(serial)) {
+            Thread::yield();
+        }
         int c = serial_getc(serial);
         mprepl_input_char(c);
     }
@@ -132,23 +134,29 @@ mprepl_add_serial(serial_t *serial) {
 static void
 _mprepl_Serial_output(void *handle, const char *str, size_t len) {
     Serial *serial = (Serial *)handle;
-    LOGF("mprepl_Serial_output %d:%.*s\r\n", (int)len, (int)len, str);
+    if (len == 1) {
+        LOGF("_mprepl_Serial_output: Serial=%p char %02x\r\n", handle, str[0]);
+    } else {
+        LOGF("_mprepl_Serial_output: %d bytes\r\n", (int)len);
+    }
     while (len--) {
         while (! serial->writeable()) {
             Thread::yield();
         }
         serial->putc(*str++);
     }
+    LOGF("_mprepl_Serial_output done\r\n");
 }
 
 static void
 _mprepl_Serial_input(Serial *serial) {
-    LOGF("Serial_input\r\n");
+    LOGF("_mprepl_Serial_input\r\n");
     while (true) {
         while (! serial->readable()) {
             Thread::yield();
         }
         int c = serial->getc();
+        LOGF("mprepl: char 0x%02x\r\n", c);
         mprepl_input_char(c);
     }
 }
@@ -236,14 +244,11 @@ int
 mprepl_run(void) {
     while (1) {
         int ret;
-        LOGF("pyexec_mode_kind=%d\r\n", pyexec_mode_kind);
         if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
-            LOGF("(friendly...\r\n");
             ret = pyexec_friendly_repl();
         } else {
             ret = pyexec_raw_repl();
         }
-        LOGF("ret=%d\r\n", ret);
         if (ret == PYEXEC_FORCED_EXIT) {
             mp_hal_stdout_tx_strn("FORCED EXIT\r\n", 13);
             break;
