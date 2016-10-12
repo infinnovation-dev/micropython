@@ -72,7 +72,7 @@ typedef union {
 
 /* User-callable */
 #define MPC_FUNC_0(r,n) MPC__FUNC(n,MPC_L1(MPC_ARG_O_##r), *MPC_VAL_O_##r(_a[0]) = n())
-#define MPC_FUNC_1(r,n,t1) MPC__FUNC(n,MPC_L2(MPC_ARG_O_##r,MPC_ARG_##t1), *MPC_VAL_O_##r(_a[0]) = n(t1MPC_VAL_##(_a[1])))
+#define MPC_FUNC_1(r,n,t1) MPC__FUNC(n,MPC_L2(MPC_ARG_O_##r,MPC_ARG_##t1), *MPC_VAL_O_##r(_a[0]) = n(MPC_VAL_##t1(_a[1])))
 #define MPC_FUNC_2(r,n,t1,t2) MPC__FUNC(n,MPC_L3(MPC_ARG_O_##r,MPC_ARG_##t1,MPC_ARG_##t2), *MPC_VAL_O_##r(_a[0]) = n(MPC_VAL_##t1(_a[1]),MPC_VAL_##t2(_a[2])))
 #define MPC_FUNC_3(r,n,t1,t2,t3) MPC__FUNC(n,MPC_L4(MPC_ARG_O_##r,MPC_ARG_##t1,MPC_ARG_##t2,MPC_ARG_##t3), *MPC_VAL_O_##r(_a[0]) = n(MPC_VAL_##t1(_a[1]),MPC_VAL_##t2(_a[2]),MPC_VAL_##t3(_a[3])))
 

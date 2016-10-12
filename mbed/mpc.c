@@ -163,7 +163,7 @@ mpc_in(size_t n_defs, const mpc_argdef_t *argdefs, mpc_val_t *vals,
     unsigned i;
     // Count expected inputs
     int nexp = 0;
-    for (i = 1; i < n_defs; i++) {
+    for (i = 0; i < n_defs; i++) {
         if (argdefs[i].type & MPC_OUT) {
             ;
         } else {
@@ -172,7 +172,7 @@ mpc_in(size_t n_defs, const mpc_argdef_t *argdefs, mpc_val_t *vals,
     }
     mp_arg_check_num(n_args, 0, nexp, nexp, 0);
     int iarg = 0;
-    for (i = 1; i < n_defs; i++) {
+    for (i = 0; i < n_defs; i++) {
         if (argdefs[i].type & MPC_OUT) {
             // Output
             if ((argdefs[i].type & ~ MPC_OUT) == MPC_TYPE_CHARBUF) {
