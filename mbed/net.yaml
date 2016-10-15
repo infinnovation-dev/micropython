@@ -135,6 +135,7 @@ sections:
           open:
             args:
               - netif EthernetInterface
+            ret: int
           close:
             ret: int
           bind:

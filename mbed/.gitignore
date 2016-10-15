@@ -1,3 +1,6 @@
 # Generated files
 mbedpins.h
 qstrdefscond.h
+modnet.c
+modnet_i.h
+modnet_i.cpp
