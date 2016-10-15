@@ -1,0 +1,183 @@
+name: net
+include:
+  - '"mbed.h"'
+  - '"EthernetInterface.h"'
+sections:
+  -
+    condition: MICROPY_MBED_NETWORK
+    classes:
+      EthernetInterface:
+        methods:
+          connect:
+            ret: int
+          disconnect:
+            ret: int
+          get_ip_address:
+            ret: string
+          get_mac_address:
+            ret: string
+      SocketAddress:
+        args:
+          - addr string
+          - port int
+        methods:
+          set_ip_address:
+            args:
+              - addr string
+          set_port:
+            args:
+              - port int
+          get_ip_address:
+            ret: string
+          get_port:
+            ret: int
+      TCPSocket:
+        methods:
+          open:
+            args:
+              - netif EthernetInterface
+            ret: int
+          close:
+            ret: int
+          connect:
+            args:
+              -
+                name: addr
+                type: SocketAddress
+                cpparg: "*addr"
+            ret: int
+          send:
+            args:
+              - data buffer
+            ret: int
+          recv:
+            args:
+              - size int
+            code:
+              - "vstr_t buf_v;"
+              - "vstr_init_len(&buf_v, size);"
+              - "mp_obj_t res[2];"
+              - "int ret = self->cpp->recv(buf_v.buf, buf_v.len);"
+              - "res[0] = MP_OBJ_NEW_SMALL_INT(ret);"
+              - "if (ret <= 0) {"
+              - "    res[1] = mp_const_empty_bytes;"
+              - "} else {"
+              - "    buf_v.len = ret;"
+              - "    res[1] = mp_obj_new_str_from_vstr(&mp_type_bytes, &buf_v);"
+              - "}"
+              - "return mp_obj_new_tuple(2, res);"
+          bind:
+            args:
+              -
+                name: addr
+                type: SocketAddress
+                cpparg: "*addr"
+            ret: int
+          set_blocking:
+            args:
+              - blocking bool
+          set_timeout:
+            args:
+              - timeout int
+      TCPServer:
+        methods:
+          open:
+            args:
+              - netif EthernetInterface
+            ret: int
+          close:
+            ret: int
+          bind:
+            args:
+              -
+                name: addr
+                type: SocketAddress
+                cpparg: "*addr"
+            ret: int
+          listen:
+            args:
+              - backlog int
+            ret: int
+          accept:
+            code:
+              - "TCPSocket *sock = new TCPSocket;"
+              - "int ret = self->cpp->accept(sock);"
+              - "mp_obj_t res[3];"
+              - "res[0] = mp_obj_new_int(ret);"
+              - "if (ret != 0) {"
+              - "    res[1] = res[2] = mp_const_none;"
+              - "    delete sock;"
+              - "} else {"
+              - "    mpy_net_TCPSocket_obj_t *o ="
+              - "        m_new_obj_with_finaliser(mpy_net_TCPSocket_obj_t);"
+              - "    o->base.type = &mpy_net_TCPSocket_type;"
+              - "    o->cpp = sock;"
+              - "    res[1] = o;"
+              - "    res[2] = mp_const_none;"
+              - "}"
+              - "return mp_obj_new_tuple(3, res);"
+            ret: SPECIAL
+          bind:
+            args:
+              -
+                name: addr
+                type: SocketAddress
+                cpparg: "*addr"
+            ret: int
+          set_blocking:
+            args:
+              - blocking bool
+          set_timeout:
+            args:
+              - timeout int
+      UDPSocket:
+        methods:
+          open:
+            args:
+              - netif EthernetInterface
+          close:
+            ret: int
+          bind:
+            args:
+              -
+                name: addr
+                type: SocketAddress
+                cpparg: "*addr"
+            ret: int
+          set_blocking:
+            args:
+              - blocking bool
+          set_timeout:
+            args:
+              - timeout int
+          sendto:
+            args:
+              -
+                name: addr
+                type: SocketAddress
+                cpparg: "*addr"
+              - data buffer
+            ret: int
+          recvfrom:
+            args:
+              - size int
+            code:
+              - "vstr_t buf_v;"
+              - "vstr_init_len(&buf_v, size);"
+              - "SocketAddress addr;"
+              - "int ret = self->cpp->recvfrom(&addr, buf_v.buf, buf_v.len);"
+              - "mp_obj_t res[3];"
+              - "res[0] = MP_OBJ_NEW_SMALL_INT(ret);"
+              - "if (ret < 0) {"
+              - "    res[1] = res[2] = mp_const_none;"
+              - "} else {"
+              - "    mpy_net_SocketAddress_obj_t *o = "
+              - "        m_new_obj_with_finaliser(mpy_net_SocketAddress_obj_t);"
+              - "    o->base.type = &mpy_net_SocketAddress_type;"
+              - "    o->cpp = new SocketAddress(addr);"
+              - "    res[1] = o;"
+              - "    buf_v.len = ret;"
+              - "    res[2] = mp_obj_new_str_from_vstr(&mp_type_bytes, &buf_v);"
+              - "}"
+              - "return mp_obj_new_tuple(3, res);"
+            

@@ -82,6 +82,9 @@ extern int mp__printf(const char *, ...);
 #define MICROPY_PY_MACHINE          (1)
 // Build "mbed" module
 #define MICROPY_PY_MBED             (1)
+#define MICROPY_PY_NET              (1)
+#define MICROPY_MBED_NETWORK        (1)
+extern const struct _mp_obj_module_t mp_module_net;
 // Build "k64f" module
 #if defined(TARGET_K64F)
 #define MICROPY_PY_K64F             (1)
@@ -166,6 +169,7 @@ extern const struct _mp_obj_module_t mp_module_k64f;
     MICROPY_PY_MACHINE_DEF           \
     MICROPY_PY_PINS_DEF              \
     MICROPY_PY_K64F_DEF              \
+    { MP_ROM_QSTR(MP_QSTR_net), MP_ROM_PTR(&mp_module_net) },
 
 // Use by readline.c
 #define MICROPY_PORT_ROOT_POINTERS \
