@@ -1,21 +1,24 @@
 #=======================================================================
 #       Generate boilerplate for wrapping mbed C++ classes
 #
-#       module mbed:
-#       - section network:
-#         - class EthernetInterface
-#           - method connect
-#             - return int
-#         - class UDPSocket:
-#           - method open
-#             - arg EthernetInterface
-#           - method connect
+#       name: mbed
+#       sections:
+#	  -
+#	    condition DEVICE_DIGITALOUT
+#	    classes:
+#             EthernetInterface:
+#               methods:
+#                 - connect:
+#                     ret: int
+#             UDPSocket:
+#               methods:
+#                 - open:
+#		      args:
+#                       - netif EthernetInterface
 #-----------------------------------------------------------------------
 #       TODO
-#       - "condition" at other levels
 #       - functions
 #       - constants
-#       - optional args
 #       - variant arg forms
 #       - destructors
 #=======================================================================
@@ -49,7 +52,8 @@ class Gen(object):
 
     def h_section(self, sect):
         for name, cls in sect.get('classes', {}).items():
-            self.h_class(cls, name)
+            with self.condition(cls):
+                self.h_class(cls, name)
 
     def h_class(self, cls, name):
         csym = '%s_%s' % (self.prefix, name)
@@ -58,13 +62,15 @@ class Gen(object):
         self.out('extern const mp_obj_type_t %s_type;' % csym)
         self.out('extern mp_obj_t %s_make_new(const mp_obj_type_t *, mp_uint_t, mp_uint_t, const mp_obj_t *);' % csym)
         for mname, meth in cls.get('methods', {}).items():
-            self.h_method(meth, name, mname)
+            with self.condition(meth):
+                self.h_method(meth, name, mname)
 
     def h_method(self, meth, cname, mname):
         msym = '%s_%s_%s' % (self.prefix, cname, mname)
-        args = meth.get('args', [])
+        args = [Arg(a)  for a in meth.get('args', [])]
         nargs = len(args)
-        if nargs <= 2:
+        nopt = len([arg  for arg in args  if arg.default])
+        if nargs <= 2 and nopt == 0:
             cargs = ', '.join(['mp_obj_t self_in'] + ['mp_obj_t']*nargs)
         else:
             cargs = 'size_t n_args, const mp_obj_t *args'
@@ -93,8 +99,9 @@ class Gen(object):
         for sect in mod['sections']:
             with self.condition(sect):
                 for cname, cls in sect.get('classes', {}).items():
-                    self.out('    { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_type) },' %
-                             (cname, self.prefix, cname))
+                    with self.condition(cls):
+                        self.out('    { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_type) },' %
+                                 (cname, self.prefix, cname))
         self.out('};')
         self.out('')
         self.out('STATIC MP_DEFINE_CONST_DICT(%s_module_globals,' %
@@ -112,19 +119,23 @@ class Gen(object):
 
     def c_section(self, sect):
         for name, cls in sect.get('classes', {}).items():
-            self.c_class(cls, name)
+            with self.condition(cls):
+                self.c_class(cls, name)
 
     def c_class(self, cls, name):
         csym = '%s_%s' % (self.prefix, name)
         self.out('')
         self.out('// class %s' % name)
         for mname, meth in cls.get('methods', {}).items():
-            self.c_define_method(meth, name, mname)
+            with self.condition(meth):
+                self.c_define_method(meth, name, mname)
         self.out('')
-        self.out('STATIC const mp_rom_map_elem_t %s_locals_dict_table[] = {' % csym)
+        self.out('STATIC const mp_rom_map_elem_t %s_locals_dict_table[] = {' %
+                 csym)
         for mname, meth in cls.get('methods', {}).items():
-            self.out('  { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_obj) },' %
-                     (mname, csym, mname))
+            with self.condition(meth):
+                self.out('  { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_obj) },' %
+                         (mname, csym, mname))
         self.out('};')
         self.out('')
         self.out('STATIC MP_DEFINE_CONST_DICT(%s_locals_dict,' % csym)
@@ -139,15 +150,16 @@ class Gen(object):
 
     def c_define_method(self, meth, cname, mname):
         msym = '%s_%s_%s' % (self.prefix, cname, mname)
-        args = meth.get('args', [])
+        args = [Arg(a)  for a in meth.get('args', [])]
         nargs = len(args)
-        if nargs <= 2:
+        nopt = len([arg  for arg in args  if arg.default])
+        if nargs <= 2 and nopt == 0:
             self.out('STATIC MP_DEFINE_CONST_FUN_OBJ_%d(%s_obj,' %
                      (1+nargs, msym))
             self.out('                                 %s);' % msym)
         else:
             self.out('STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(%s_obj, %d, %d,' %
-                     (msym, nargs, nargs))
+                     (msym, 1 + nargs - nopt, 1 + nargs))
             self.out('                                           %s);' % msym)
 
     #-----------------------------------------------------------------------
@@ -171,7 +183,8 @@ class Gen(object):
         for sect in mod['sections']:
             with self.condition(sect):
                 for cname, cls in sect.get('classes', {}).items():
-                    self.cpp_class_struct(cls, cname)
+                    with self.condition(cls):
+                        self.cpp_class_struct(cls, cname)
         for sect in mod['sections']:
             with self.condition(sect):
                 self.cpp_section(sect)
@@ -186,24 +199,27 @@ class Gen(object):
 
     def cpp_section(self, sect):
         for name, cls in sect.get('classes', {}).items():
-            self.cpp_class(cls, name)
+            with self.condition(cls):
+                self.cpp_class(cls, name)
 
     def cpp_class(self, cls, name):
         csym = '%s_%s' % (self.prefix, name)
         #args = [a.split()  for a in cls.get('args', [])]
         args = [Arg(a) for a in cls.get('args', [])]
         nargs = len(args)
+        nopt = len([a  for a in args  if a.default])
         self.out('')
         self.banner('class %s' % name);
         self.out('mp_obj_t %s_make_new(const mp_obj_type_t *type,' % csym)
         self.out('        mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {')
         self.out('    (void)type;')
         self.out('    mp_arg_check_num(n_args, n_kw, %d, %d, false);' %
-                 (nargs, nargs))
+                 (nargs - nopt, nargs))
         #       for i, (aname, atype) in enumerate(args):
         #           self.cpp_arg_in(aname, atype, 'args[%d]' % i)
         for i, arg in enumerate(args):
-            self.cpp_arg_in(arg.name, arg.type, 'args[%d]' % i)
+            self.cpp_arg_in(arg.name, arg.type, 'args[%d]' % i,
+                            '(n_args > %d)' % i, arg.default)
         self.out('    %s_obj_t *o =' % csym)
         self.out('        m_new_obj_with_finaliser(%s_obj_t);' % csym)
         self.out('    o->base.type = &%s_type;' % csym)
@@ -212,32 +228,33 @@ class Gen(object):
         self.out('    return o;')
         self.out('}')
         for mname, meth in cls.get('methods', {}).items():
-            self.cpp_method(meth, name, mname)
+            with self.condition(meth):
+                self.cpp_method(meth, name, mname)
 
     def cpp_method(self, meth, cname, mname):
         csym = '%s_%s' % (self.prefix, cname)
         msym = '%s_%s_%s' % (self.prefix, cname, mname)
-        #args = [a.split()  for a in meth.get('args', [])]
         args = [Arg(a)  for a in meth.get('args', [])]
         nargs = len(args)
+        nopt = len([a  for a in args  if a.default])
         ret = meth.get('ret')
         self.out('')
-        cargs = ['mp_obj_t self_in']
-        if nargs <= 2:
+        if nargs <= 2 and nopt == 0:
+            cargs = ['mp_obj_t self_in']
             for arg in args:
                 cargs.append('mp_obj_t %s_in' % arg.name)
-        else:
-            raise NotImplementedError('> 3 args')
-        self.out('mp_obj_t %s(%s) {' % (msym, ', '.join(cargs)))
-        self.out('    %s_obj_t *self = (%s_obj_t *)self_in;' % (csym, csym))
-        if nargs <= 2:
+            self.out('mp_obj_t %s(%s) {' % (msym, ', '.join(cargs)))
+            self.out('    %s_obj_t *self = (%s_obj_t *)self_in;' % (csym, csym))
             for arg in args:
                 self.cpp_arg_in(arg.name, arg.type, arg.name+'_in')
         else:
-            for i, (aname, atype) in enumerate(args):
-                self.cpp_arg_in(aname, atype, 'args[%d]' % i)
-        cppargs = ', '.join(['%s.buf, %s.len' % (arg.name, arg.name)  if arg.type=='buffer'  else arg.cpparg
-                             for arg in args])
+            self.out('mp_obj_t %s(size_t n_args, const mp_obj_t *args) {' %
+                     msym)
+            self.out('    %s_obj_t *self = (%s_obj_t *)args[0];' % (csym, csym))
+            for i, arg in enumerate(args):
+                self.cpp_arg_in(arg.name, arg.type, 'args[%d]' % (i+1),
+                                '(n_args > %d)' % (i+1), arg.default)
+        cppargs = ', '.join([arg.cpparg  for arg in args])
         if 'code' in meth:
             for line in meth['code']:
                 self.out('    %s' % line)
@@ -249,6 +266,12 @@ class Gen(object):
                 elif ret == 'string':
                     decl = 'const char *ret'
                     ret = 'mp_obj_new_str(ret, strlen(ret), false)'
+                elif ret == 'bool':
+                    decl = 'int ret'
+                    ret = 'ret ? mp_const_true : mp_const_false'
+                elif ret == 'float':
+                    decl = 'float ret'
+                    ret = 'mp_obj_new_float((mp_float_t)ret)'
                 else:
                     warn('return type %s for %s.%s' % (ret, cname, mname))
                     decl = 'FIXME'
@@ -261,14 +284,23 @@ class Gen(object):
             self.out('    return %s;' % ret)
         self.out('}')
 
-    def cpp_arg_in(self, aname, atype, var):
+    def cpp_arg_in(self, aname, atype, var, cond='', default=''):
         if atype == 'int':
-            self.out('    int %s = mp_obj_get_int(%s);' % (aname, var))
+            self.cpp_basic_arg_in('int %s' % aname,
+                                  'mp_obj_get_int(%s)' % var,
+                                  cond, default)
+        elif atype == 'float':
+            self.cpp_basic_arg_in('mp_float_t %s' % aname,
+                                  'mp_obj_get_float(%s)' % var,
+                                  cond, default)
         elif atype == 'bool':
-            self.out('    int %s = mp_obj_is_true(%s);' % (aname, var))
+            self.cpp_basic_arg_in('int %s' % aname,
+                                  'mp_obj_is_true(%s)' % var,
+                                  cond, default)
         elif atype == 'string':
-            self.out('    const char *%s = mp_obj_str_get_str(%s);' %
-                     (aname, var))
+            self.cpp_basic_arg_in('const char *%s' % aname,
+                                  'mp_obj_str_get_str(%s)' % var,
+                                  cond, default)
         elif atype == 'buffer':
             self.out('    mp_buffer_info_t %s;' % aname)
             self.out('    mp_get_buffer_raise(%s, &%s, MP_BUFFER_READ);' %
@@ -284,6 +316,13 @@ class Gen(object):
         else:
             warn('arg type %s for %s' % (atype, var))
             self.out('    FIXME %s <- %s;' % (aname, var))
+
+    def cpp_basic_arg_in(self, lhs, rhs, cond, default):
+        if default:
+            self.out('    %s = %s ? %s : %s;' %
+                     (lhs, cond, rhs, default))
+        else:
+            self.out('    %s = %s;' % (lhs, rhs))
 
     #-----------------------------------------------------------------------
     #   Internals
@@ -319,8 +358,12 @@ class Arg(object):
         if isinstance(obj, dict):
             self.d = obj.copy()
         else:
-            n, t = obj.split()
-            self.d = dict(name=n, type=t)
+            name, typespec = obj.split()
+            type, _, optspec = typespec.partition('?')
+            self.d = dict(name=name, type=type)
+            for opt in optspec.split(';'):
+                k, _, v = opt.partition('=')
+                self.d[k] = v
 
     @property
     def name(self):
@@ -331,8 +374,20 @@ class Arg(object):
         return self.d['type']
 
     @property
+    def default(self):
+        return self.d.get('default')
+
+    @property
     def cpparg(self):
-        return self.d.get('cpparg', self.name)
+        arg = self.d.get('cpparg')
+        if arg is None:
+            if self.type == 'buffer':
+                arg = '%s.buf, %s.len' % (self.name, self.name)
+            else:
+                arg = self.name
+                if 'cast' in self.d:
+                    arg = '(%s)%s' % (self.d['cast'], arg)
+        return arg
 
 if __name__=='__main__':
     import argparse

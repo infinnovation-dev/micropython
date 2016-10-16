@@ -19,7 +19,7 @@ sections:
       SocketAddress:
         args:
           - addr string
-          - port int
+          - port int?default=0
         methods:
           set_ip_address:
             args:
@@ -116,7 +116,6 @@ sections:
               - "    res[2] = mp_const_none;"
               - "}"
               - "return mp_obj_new_tuple(3, res);"
-            ret: SPECIAL
           bind:
             args:
               -
