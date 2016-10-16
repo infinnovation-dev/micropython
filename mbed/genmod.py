@@ -17,7 +17,6 @@
 #                       - netif EthernetInterface
 #-----------------------------------------------------------------------
 #       TODO
-#       - functions
 #       - constants
 #       - variant arg forms
 #       - destructors
@@ -51,7 +50,10 @@ class Gen(object):
         self.out('#endif // %s' % guard)
 
     def h_section(self, sect):
-        for name, cls in sect.get('classes', {}).items():
+        for name, func in sorted(sect.get('functions', {}).items()):
+            with self.condition(func):
+                self.h_method(func, None, name)
+        for name, cls in sorted(sect.get('classes', {}).items()):
             with self.condition(cls):
                 self.h_class(cls, name)
 
@@ -61,20 +63,27 @@ class Gen(object):
         self.out('// class %s' % name)
         self.out('extern const mp_obj_type_t %s_type;' % csym)
         self.out('extern mp_obj_t %s_make_new(const mp_obj_type_t *, mp_uint_t, mp_uint_t, const mp_obj_t *);' % csym)
-        for mname, meth in cls.get('methods', {}).items():
+        for mname, meth in sorted(cls.get('methods', {}).items()):
             with self.condition(meth):
                 self.h_method(meth, name, mname)
 
     def h_method(self, meth, cname, mname):
-        msym = '%s_%s_%s' % (self.prefix, cname, mname)
+        with_self = int(bool(cname))
+        if with_self:
+            msym = '%s_%s_%s' % (self.prefix, cname, mname)
+        else:
+            msym = '%s_%s' % (self.prefix, mname)
         args = [Arg(a)  for a in meth.get('args', [])]
         nargs = len(args)
         nopt = len([arg  for arg in args  if arg.default])
-        if nargs <= 2 and nopt == 0:
-            cargs = ', '.join(['mp_obj_t self_in'] + ['mp_obj_t']*nargs)
+        if with_self + nargs <= 3 and nopt == 0:
+            cargs = []
+            if with_self:
+                cargs.append('mp_obj_t self_in')
+            cargs += ['mp_obj_t'] * nargs
         else:
-            cargs = 'size_t n_args, const mp_obj_t *args'
-        self.out('extern mp_obj_t %s(%s);' % (msym, cargs))
+            cargs = ['size_t n_args', 'const mp_obj_t *args']
+        self.out('extern mp_obj_t %s(%s);' % (msym, ', '.join(cargs)))
 
     #-----------------------------------------------------------------------
     #   C module
@@ -98,7 +107,11 @@ class Gen(object):
         self.out('    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_%s) },' % name)
         for sect in mod['sections']:
             with self.condition(sect):
-                for cname, cls in sect.get('classes', {}).items():
+                for fname, func in sorted(sect.get('functions', {}).items()):
+                    with self.condition(func):
+                        self.out('    { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_type) },' %
+                                 (fname, self.prefix, fname))
+                for cname, cls in sorted(sect.get('classes', {}).items()):
                     with self.condition(cls):
                         self.out('    { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_type) },' %
                                  (cname, self.prefix, cname))
@@ -118,7 +131,10 @@ class Gen(object):
         self.out('#endif // MICROPY_PY_%s' % name.upper())
 
     def c_section(self, sect):
-        for name, cls in sect.get('classes', {}).items():
+        for name, func in sorted(sect.get('functions', {}).items()):
+            with self.condition(func):
+                self.c_define_method(func, None, name)
+        for name, cls in sorted(sect.get('classes', {}).items()):
             with self.condition(cls):
                 self.c_class(cls, name)
 
@@ -126,13 +142,13 @@ class Gen(object):
         csym = '%s_%s' % (self.prefix, name)
         self.out('')
         self.out('// class %s' % name)
-        for mname, meth in cls.get('methods', {}).items():
+        for mname, meth in sorted(cls.get('methods', {}).items()):
             with self.condition(meth):
                 self.c_define_method(meth, name, mname)
         self.out('')
         self.out('STATIC const mp_rom_map_elem_t %s_locals_dict_table[] = {' %
                  csym)
-        for mname, meth in cls.get('methods', {}).items():
+        for mname, meth in sorted(cls.get('methods', {}).items()):
             with self.condition(meth):
                 self.out('  { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_obj) },' %
                          (mname, csym, mname))
@@ -149,17 +165,21 @@ class Gen(object):
         self.out('};')
 
     def c_define_method(self, meth, cname, mname):
-        msym = '%s_%s_%s' % (self.prefix, cname, mname)
+        with_self = int(bool(cname))
+        if with_self:
+            msym = '%s_%s_%s' % (self.prefix, cname, mname)
+        else:
+            msym = '%s_%s' % (self.prefix, mname)
         args = [Arg(a)  for a in meth.get('args', [])]
         nargs = len(args)
         nopt = len([arg  for arg in args  if arg.default])
-        if nargs <= 2 and nopt == 0:
+        if with_self + nargs <= 3 and nopt == 0:
             self.out('STATIC MP_DEFINE_CONST_FUN_OBJ_%d(%s_obj,' %
-                     (1+nargs, msym))
+                     (with_self + nargs, msym))
             self.out('                                 %s);' % msym)
         else:
             self.out('STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(%s_obj, %d, %d,' %
-                     (msym, 1 + nargs - nopt, 1 + nargs))
+                     (msym, with_self + nargs - nopt, with_self + nargs))
             self.out('                                           %s);' % msym)
 
     #-----------------------------------------------------------------------
@@ -182,7 +202,7 @@ class Gen(object):
         self.out('}')
         for sect in mod['sections']:
             with self.condition(sect):
-                for cname, cls in sect.get('classes', {}).items():
+                for cname, cls in sorted(sect.get('classes', {}).items()):
                     with self.condition(cls):
                         self.cpp_class_struct(cls, cname)
         for sect in mod['sections']:
@@ -198,7 +218,10 @@ class Gen(object):
         self.out('};')
 
     def cpp_section(self, sect):
-        for name, cls in sect.get('classes', {}).items():
+        for name, func in sorted(sect.get('functions', {}).items()):
+            with self.condition(func):
+                self.cpp_method(func, None, name)
+        for name, cls in sorted(sect.get('classes', {}).items()):
             with self.condition(cls):
                 self.cpp_class(cls, name)
 
@@ -227,38 +250,48 @@ class Gen(object):
         self.out('    o->cpp = new %s(%s);' % (name, cppargs))
         self.out('    return o;')
         self.out('}')
-        for mname, meth in cls.get('methods', {}).items():
+        for mname, meth in sorted(cls.get('methods', {}).items()):
             with self.condition(meth):
                 self.cpp_method(meth, name, mname)
 
-    def cpp_method(self, meth, cname, mname):
-        csym = '%s_%s' % (self.prefix, cname)
-        msym = '%s_%s_%s' % (self.prefix, cname, mname)
-        args = [Arg(a)  for a in meth.get('args', [])]
+    def cpp_method(self, func, cname, mname):
+        """Generate code for function or class method."""
+        with_self = int(bool(cname))
+        if with_self:
+            csym = '%s_%s' % (self.prefix, cname)
+            msym = '%s_%s' % (csym, mname)
+        else:
+            msym = '%s_%s' % (self.prefix, mname)
+        args = [Arg(a)  for a in func.get('args', [])]
         nargs = len(args)
         nopt = len([a  for a in args  if a.default])
-        ret = meth.get('ret')
         self.out('')
-        if nargs <= 2 and nopt == 0:
-            cargs = ['mp_obj_t self_in']
+        if with_self + nargs <= 3 and nopt == 0:
+            cargs = ['mp_obj_t self_in']  if with_self  else []
             for arg in args:
                 cargs.append('mp_obj_t %s_in' % arg.name)
             self.out('mp_obj_t %s(%s) {' % (msym, ', '.join(cargs)))
-            self.out('    %s_obj_t *self = (%s_obj_t *)self_in;' % (csym, csym))
+            if with_self:
+                self.out('    %s_obj_t *self = (%s_obj_t *)self_in;' %
+                         (csym, csym))
             for arg in args:
                 self.cpp_arg_in(arg.name, arg.type, arg.name+'_in')
         else:
             self.out('mp_obj_t %s(size_t n_args, const mp_obj_t *args) {' %
                      msym)
-            self.out('    %s_obj_t *self = (%s_obj_t *)args[0];' % (csym, csym))
+            if with_self:
+                self.out('    %s_obj_t *self = (%s_obj_t *)args[0];' %
+                         (csym, csym))
             for i, arg in enumerate(args):
-                self.cpp_arg_in(arg.name, arg.type, 'args[%d]' % (i+1),
-                                '(n_args > %d)' % (i+1), arg.default)
+                iarg = with_self + i
+                self.cpp_arg_in(arg.name, arg.type, 'args[%d]' % iarg,
+                                '(n_args > %d)' % iarg, arg.default)
         cppargs = ', '.join([arg.cpparg  for arg in args])
-        if 'code' in meth:
-            for line in meth['code']:
+        if 'code' in func:
+            for line in func['code']:
                 self.out('    %s' % line)
         else:
+            ret = func.get('ret')
             if ret:
                 if ret == 'int':
                     decl = 'int ret'
@@ -273,14 +306,18 @@ class Gen(object):
                     decl = 'float ret'
                     ret = 'mp_obj_new_float((mp_float_t)ret)'
                 else:
-                    warn('return type %s for %s.%s' % (ret, cname, mname))
+                    warn('return type %s for %s%s' %
+                         (ret, cname+'.' if cname else '', mname))
                     decl = 'FIXME'
                     ret = 'FIXME(ret)'
                 lhs = '%s = ' % decl
             else:
                 lhs = ''
                 ret = 'mp_const_none'
-            self.out('    %sself->cpp->%s(%s);' % (lhs, mname, cppargs))
+            if with_self:
+                self.out('    %sself->cpp->%s(%s);' % (lhs, mname, cppargs))
+            else:
+                self.out('    %s%s(%s);' % (lhs, mname, cppargs))
             self.out('    return %s;' % ret)
         self.out('}')
 
