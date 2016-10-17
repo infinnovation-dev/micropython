@@ -37,7 +37,7 @@ sections:
         args:
           - us int
   -
-    condition: MBED_CONF_MICROPYTHON_WITH_DIGITALIN
+    condition: MICROPY_MBED_DIGITALIN
     classes:
       DigitalIn:
         args:
@@ -57,6 +57,7 @@ sections:
       PullDown: int
       PullDefault: int
   -
+    condition: MICROPY_MBED_DIGITALOUT
     classes:
       DigitalOut:
         args:
@@ -70,7 +71,7 @@ sections:
           is_connected:
             ret: bool
   -
-    condition: MBED_CONF_MICROPYTHON_WITH_PWMOUT
+    condition: MICROPY_MBED_PWMOUT
     classes:
       PwmOut:
         args:
@@ -104,7 +105,7 @@ sections:
             args:
               - us int
   -
-    condition: MBED_CONF_MICROPYTHON_WITH_SERIAL
+    condition: MICROPY_MBED_SERIAL
     cinclude:
       - '"serial_api.h"'
     classes:

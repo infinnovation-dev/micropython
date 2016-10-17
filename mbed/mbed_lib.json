@@ -20,6 +20,14 @@
 	"with-pins": {
 	    "help": "Enable MicroPython pins module",
 	    "value": true
+	},
+	"with-net": {
+	    "help": "Enable MicroPython net module",
+	    "value": true
+	},
+	"with-help": {
+	    "help": "Enable MicroPython help() function",
+	    "value": true
 	}
     }
 }

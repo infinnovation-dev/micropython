@@ -1,6 +1,9 @@
 # Generated files
 mbedpins.h
 qstrdefscond.h
+modmbed.c
+modmbed_i.h
+modmbed_i.cpp
 modnet.c
 modnet_i.h
 modnet_i.cpp

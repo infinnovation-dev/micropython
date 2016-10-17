@@ -80,11 +80,27 @@ extern int mp__printf(const char *, ...);
 #define MICROPY_PY_SYS              (1)
 // Build "machine" module (port-specific)
 #define MICROPY_PY_MACHINE          (1)
+
 // Build "mbed" module
 #define MICROPY_PY_MBED             (1)
-#define MICROPY_PY_NET              (1)
-#define MICROPY_MBED_NETWORK        (1)
-extern const struct _mp_obj_module_t mp_module_net;
+//   Enable features in mbed module, when requested (mbed_lib.json) and
+//   available (mbed-os/hal/targets.json)
+#define MICROPY_MBED_DIGITALIN      MBED_CONF_MICROPYTHON_WITH_DIGITALIN
+#define MICROPY_MBED_DIGITALOUT     MBED_CONF_MICROPYTHON_WITH_DIGITALOUT
+#if DEVICE_PWMOUT
+    #define MICROPY_MBED_PWMOUT     MBED_CONF_MICROPYTHON_WITH_PWMOUT
+#else
+    #define MICROPY_MBED_PWMOUT     0
+#endif
+#if DEVICE_SERIAL
+    #define MICROPY_MBED_SERIAL     MBED_CONF_MICROPYTHON_WITH_SERIAL
+#else
+    #define MICROPY_MBED_PWMOUT     0
+#endif
+
+// Build "net" module
+#define MICROPY_PY_NET              MBED_CONF_MICROPYTHON_WITH_NET
+
 // Build "k64f" module
 #if defined(TARGET_K64F)
 #define MICROPY_PY_K64F             (1)
@@ -118,9 +134,17 @@ typedef long mp_off_t;
 #define MP_PLAT_PRINT_STRN(str, len) mp_hal_stdout_tx_strn_cooked(str, len)
 
 // extra built in names to add to the global namespace
+#if MBED_CONF_MICROPYTHON_WITH_HELP
 extern const struct _mp_obj_fun_builtin_t mp_builtin_help_obj;
-#define MICROPY_PORT_BUILTINS \
+#define MICROPY_MAYBE_BUILTIN_HELP \
     { MP_OBJ_NEW_QSTR(MP_QSTR_help), (mp_obj_t)&mp_builtin_help_obj },
+#else
+#define MICROPY_MAYBE_BUILTIN_HELP
+#endif
+
+#define MICROPY_PORT_BUILTINS                   \
+    MICROPY_MAYBE_BUILTIN_HELP
+
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
@@ -134,42 +158,50 @@ extern const struct _mp_obj_fun_builtin_t mp_builtin_help_obj;
 // Extra modules to build in
 #if MICROPY_PY_MBED
 extern const struct _mp_obj_module_t mp_module_mbed;
-#define MICROPY_PY_MBED_DEF \
+#define MICROPY_MAYBE_MODULE_MBED \
     { MP_ROM_QSTR(MP_QSTR_mbed), MP_ROM_PTR(&mp_module_mbed) },
 #else
-#define MICROPY_PY_MBED_DEF
+#define MICROPY_MAYBE_MODULE_MBED
+#endif
+
+#if MICROPY_PY_NET
+extern const struct _mp_obj_module_t mp_module_net;
+#define MICROPY_MAYBE_MODULE_NET \
+    { MP_ROM_QSTR(MP_QSTR_net), MP_ROM_PTR(&mp_module_net) },
+#else
+#define MICROPY_MAYBE_MODULE_NET
 #endif
 
 #if MICROPY_PY_MACHINE
 extern const struct _mp_obj_module_t mp_module_machine;
-#define MICROPY_PY_MACHINE_DEF \
+#define MICROPY_MAYBE_MODULE_MACHINE \
     { MP_ROM_QSTR(MP_QSTR_machine), MP_ROM_PTR(&mp_module_machine) },
 #else
-#define MICROPY_PY_MACHINE_DEF
+#define MICROPY_MAYBE_MODULE_MACHINE
 #endif
 
 #if MBED_CONF_MICROPYTHON_WITH_PINS
 extern const struct _mp_obj_module_t mp_module_pins;
-#define MICROPY_PY_PINS_DEF \
+#define MICROPY_MAYBE_MODULE_PINS \
     { MP_ROM_QSTR(MP_QSTR_pins), MP_ROM_PTR(&mp_module_pins) },
 #else
-#define MICROPY_PY_PINS_DEF
+#define MICROPY_MAYBE_MODULE_PINS
 #endif
 
 #if defined(TARGET_K64F) && MICROPY_PY_K64F
 extern const struct _mp_obj_module_t mp_module_k64f;
-#define MICROPY_PY_K64F_DEF \
+#define MICROPY_MAYBE_MODULE_K64F \
     { MP_ROM_QSTR(MP_QSTR_k64f), MP_ROM_PTR(&mp_module_k64f) },
 #else
-#define MICROPY_PY_K64F_DEF
+#define MICROPY_MAYBE_MODULE_K64F
 #endif
 
 #define MICROPY_PORT_BUILTIN_MODULES \
-    MICROPY_PY_MBED_DEF              \
-    MICROPY_PY_MACHINE_DEF           \
-    MICROPY_PY_PINS_DEF              \
-    MICROPY_PY_K64F_DEF              \
-    { MP_ROM_QSTR(MP_QSTR_net), MP_ROM_PTR(&mp_module_net) },
+    MICROPY_MAYBE_MODULE_MBED              \
+    MICROPY_MAYBE_MODULE_NET               \
+    MICROPY_MAYBE_MODULE_MACHINE           \
+    MICROPY_MAYBE_MODULE_PINS              \
+    MICROPY_MAYBE_MODULE_K64F              \
 
 // Use by readline.c
 #define MICROPY_PORT_ROOT_POINTERS \

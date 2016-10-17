@@ -23,8 +23,9 @@ PINS_PATH_NUCLEO_F401RE = TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F401RE
 PYSRC = $(wildcard ../py/*.c)
 EXTMODSRC = ../extmod/machine_mem.c
 MPLIBSRC = ../lib/utils/pyexec.c ../lib/utils/pyhelp.c ../lib/mp-readline/readline.c
-PORTSRC = modmachine.c modmbed.c modnet.c modpins.c modk64f.c mreg.c mpc.c
-REPLSRC = main.cpp help.c
+PORTSRC = modmachine.c modmbed.c modnet.c modpins.c modk64f.c \
+	 mphelp.c mreg.c mpc.c
+REPLSRC = main.cpp
 
 # Files containing MP_QSTR_ to be processed by makeqstrcond
 QSTRSRC =	../py/qstrdefs.h \
@@ -46,6 +47,9 @@ qstrdefscond.h:	makeqstrcond.py $(QSTRSRC)
 
 modmbed.c modmbed_i.h modmbed_i.cpp:	genmod.py mbed.yaml
 	python genmod.py -a mbed.yaml
+
+modnet.c modnet_i.h modnet_i.cpp:	genmod.py net.yaml
+	python genmod.py -a net.yaml
 
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h

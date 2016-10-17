@@ -75,6 +75,7 @@ mbed_lib_files = ('modmachine.c',
                   'mreg.c',
                   'mpc.h',
                   'mpc.c',
+                  'mphelp.c',
                   'mprepl.h',
                   'mprepl.cpp',
                   'mpreplserial.cpp',
@@ -86,8 +87,7 @@ mbed_lib_files = ('modmachine.c',
                   'qstrdefsport.h',
                   'unistd.h')
 
-mbed_repl_files = ('main.cpp',
-                   'help.c')
+mbed_repl_files = ('main.cpp',)
 
 mbed_gen_files = (('mbedpins.h','mbedpins.h'),
                   ('qstrdefscond.h','genhdr/qstrdefs.generated.h'),

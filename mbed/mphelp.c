@@ -21,8 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdio.h>
 #include "py/runtime.h"
+#if MBED_CONF_MICROPYTHON_WITH_HELP
+
+#include <stdio.h>
 #include "lib/utils/pyhelp.h"
 
 STATIC const char help_text[] =
@@ -51,6 +53,14 @@ STATIC const char help_text[] =
 #if MICROPY_MBED_SERIAL
     "    Serial\n"
 #endif
+#if MICROPY_PY_NET
+    "  net     -- equivalents to mbed network classes:\n"
+    "    EthernetInterface\n"
+    "    SocketAddress\n"
+    "    TCPServer\n"
+    "    TCPSocket\n"
+    "    UDPSocket\n"
+#endif
     "  pins    -- board-specific and generic named pins e.g. USBTX\n"
     ;
 
@@ -66,3 +76,5 @@ STATIC mp_obj_t mbed_help(size_t n_args, const mp_obj_t *args) {
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_builtin_help_obj, 0, 1, mbed_help);
+
+#endif // MBED_CONF_MICROPYTHON_WITH_HELP
