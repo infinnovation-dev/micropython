@@ -1,6 +1,31 @@
-#=======================================================================
-#       Generate boilerplate for wrapping mbed C++ classes
+#!/usr/bin/env python
 #
+# The MIT License (MIT)
+#
+# Copyright (c) 2016 Colin Hogben
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+"""
+Generate boilerplate for wrapping mbed C++ classes
+"""
+#=======================================================================
+# Example input
 #       name: mbed
 #       sections:
 #	  -
@@ -21,6 +46,7 @@
 #       - variant arg forms
 #       - destructors
 #=======================================================================
+from __future__ import print_function
 import yaml
 from contextlib import contextmanager
 from warnings import warn
@@ -109,12 +135,14 @@ class Gen(object):
             with self.condition(sect):
                 for fname, func in sorted(sect.get('functions', {}).items()):
                     with self.condition(func):
-                        self.out('    { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_type) },' %
+                        self.out('    { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_obj) },' %
                                  (fname, self.prefix, fname))
                 for cname, cls in sorted(sect.get('classes', {}).items()):
                     with self.condition(cls):
                         self.out('    { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_type) },' %
                                  (cname, self.prefix, cname))
+                for kname, ktype in sorted(sect.get('constants',{}).items()):
+                    self.c_constant_elem(kname, ktype)
         self.out('};')
         self.out('')
         self.out('STATIC MP_DEFINE_CONST_DICT(%s_module_globals,' %
@@ -130,7 +158,16 @@ class Gen(object):
         self.out('')
         self.out('#endif // MICROPY_PY_%s' % name.upper())
 
+    def c_constant_elem(self, kname, ktype):
+        if ktype == 'int':
+            self.out('    { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_INT(%s) },' %
+                     (kname, kname))
+        else:
+            warn('Type %s for constant %s' % (ktype, kname))
+
     def c_section(self, sect):
+        for inc in sect.get('cinclude', []):
+            self.out('#include %s' % inc)
         for name, func in sorted(sect.get('functions', {}).items()):
             with self.condition(func):
                 self.c_define_method(func, None, name)
@@ -152,6 +189,8 @@ class Gen(object):
             with self.condition(meth):
                 self.out('  { MP_ROM_QSTR(MP_QSTR_%s), MP_ROM_PTR(&%s_%s_obj) },' %
                          (mname, csym, mname))
+        for kname, ktype in sorted(cls.get('constants',{}).items()):
+            self.c_constant_elem(kname, ktype);
         self.out('};')
         self.out('')
         self.out('STATIC MP_DEFINE_CONST_DICT(%s_locals_dict,' % csym)
@@ -292,6 +331,7 @@ class Gen(object):
                 self.out('    %s' % line)
         else:
             ret = func.get('ret')
+            conv = []
             if ret:
                 if ret == 'int':
                     decl = 'int ret'
@@ -305,6 +345,15 @@ class Gen(object):
                 elif ret == 'float':
                     decl = 'float ret'
                     ret = 'mp_obj_new_float((mp_float_t)ret)'
+                elif ret[:1].isupper():
+                    # Assume object type
+                    rsym = '%s_%s' % (self.prefix, ret)
+                    decl = '%s *ret' % ret
+                    conv = ['%s_obj_t *ret_out = m_new_obj_with_finaliser(%s_obj_t);' %
+                            (rsym, rsym),
+                            'ret_out->base.type = &%s_type;' % rsym,
+                            'ret_out->cpp = ret;']
+                    ret = '(mp_obj_t)ret_out'
                 else:
                     warn('return type %s for %s%s' %
                          (ret, cname+'.' if cname else '', mname))
@@ -318,6 +367,8 @@ class Gen(object):
                 self.out('    %sself->cpp->%s(%s);' % (lhs, mname, cppargs))
             else:
                 self.out('    %s%s(%s);' % (lhs, mname, cppargs))
+            for line in conv:
+                self.out('    '+line)
             self.out('    return %s;' % ret)
         self.out('}')
 
@@ -378,7 +429,7 @@ class Gen(object):
         self.out(borderline)
 
     def out(self, line):
-        print >>self.file, line
+        print(line, file=self.file)
 
     @contextmanager
     def condition(self, obj):

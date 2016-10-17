@@ -44,6 +44,9 @@ mbedpins.h:	makembedpins.py
 qstrdefscond.h:	makeqstrcond.py $(QSTRSRC)
 	python makeqstrcond.py $(QSTRSRC) > $@
 
+modmbed.c modmbed_i.h modmbed_i.cpp:	genmod.py mbed.yaml
+	python genmod.py -a mbed.yaml
+
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h
 
