@@ -89,6 +89,7 @@ class Gen(object):
         self.out('// class %s' % name)
         self.out('extern const mp_obj_type_t %s_type;' % csym)
         self.out('extern mp_obj_t %s_make_new(const mp_obj_type_t *, mp_uint_t, mp_uint_t, const mp_obj_t *);' % csym)
+        self.out('extern mp_obj_t %s___del__(mp_obj_t self_in);' % csym)
         for mname, meth in sorted(cls.get('methods', {}).items()):
             with self.condition(meth):
                 self.h_method(meth, name, mname)
@@ -179,11 +180,15 @@ class Gen(object):
         csym = '%s_%s' % (self.prefix, name)
         self.out('')
         self.out('// class %s' % name)
+        self.out('STATIC MP_DEFINE_CONST_FUN_OBJ_1(%s___del___obj,' % csym)
+        self.out('                                 %s___del__);' % csym)
         for mname, meth in sorted(cls.get('methods', {}).items()):
             with self.condition(meth):
                 self.c_define_method(meth, name, mname)
         self.out('')
         self.out('STATIC const mp_rom_map_elem_t %s_locals_dict_table[] = {' %
+                 csym)
+        self.out('  { MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&%s___del___obj) },' %
                  csym)
         for mname, meth in sorted(cls.get('methods', {}).items()):
             with self.condition(meth):
@@ -285,9 +290,21 @@ class Gen(object):
         self.out('    %s_obj_t *o =' % csym)
         self.out('        m_new_obj_with_finaliser(%s_obj_t);' % csym)
         self.out('    o->base.type = &%s_type;' % csym)
-        cppargs = ', '.join([arg.cpparg  for arg in args])
-        self.out('    o->cpp = new %s(%s);' % (name, cppargs))
+        ctor = cls.get('ctor')
+        if not ctor:
+            cppargs = ', '.join([arg.cpparg  for arg in args])
+            ctor = 'new %s(%s)' % (name, cppargs)
+        self.out('    o->cpp = %s;' % ctor)
         self.out('    return o;')
+        self.out('}')
+        self.out('')
+        self.out('mp_obj_t %s___del__(mp_obj_t self_in) {' % csym)
+        self.out('    %s_obj_t *self = (%s_obj_t *)self_in;' % (csym, csym))
+        self.out('    if (self->cpp) {')
+        self.out('        delete self->cpp;')
+        self.out('        self->cpp = 0;')
+        self.out('    }')
+        self.out('    return mp_const_none;')
         self.out('}')
         for mname, meth in sorted(cls.get('methods', {}).items()):
             with self.condition(meth):
