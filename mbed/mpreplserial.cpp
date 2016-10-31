@@ -64,5 +64,5 @@ void
 mprepl_add_Serial(Serial &serial) {
     mprepl_add_client(_mprepl_Serial_output, &serial);
     Thread *serial_thread = new Thread();
-    serial_thread->start(Callback<void()>(&serial, _mprepl_Serial_input));
+    serial_thread->start(Callback<void()>(_mprepl_Serial_input, &serial));
 }

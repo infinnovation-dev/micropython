@@ -63,7 +63,7 @@ void
 mprepl_add_TCPSocket(TCPSocket &sock) {
     mprepl_add_client(_mprepl_TCPSocket_output, &sock);
     Thread *socket_thread = new Thread();
-    socket_thread->start(Callback<void()>(&sock, _mprepl_TCPSocket_input));
+    socket_thread->start(Callback<void()>(_mprepl_TCPSocket_input, &sock));
 }
 
 static void
@@ -96,6 +96,6 @@ mprepl_start_TCPServer(NetworkInterface *iface, int port) {
         error("Port %d: listen() failed [error=%d]\n", port, err);
     } else {
         Thread *srv_thread = new Thread;
-        srv_thread->start(Callback<void()>(srv, _mprepl_TCPServer_run));
+        srv_thread->start(Callback<void()>(_mprepl_TCPServer_run, srv));
     }
 }
