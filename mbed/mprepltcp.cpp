@@ -26,6 +26,10 @@
 
 #include "mprepl.h"
 
+#if defined(MBED_VERSION) || MBED_LIBRARY_VERSION >= 128 // 5.2
+#define CALLBACK_METHOD_OBJ 1
+#endif
+
 #ifndef LOGF
 #define LOGF(...)
 #endif
@@ -96,6 +100,10 @@ mprepl_start_TCPServer(NetworkInterface *iface, int port) {
         error("Port %d: listen() failed [error=%d]\n", port, err);
     } else {
         Thread *srv_thread = new Thread;
+#if CALLBACK_METHOD_OBJ
         srv_thread->start(Callback<void()>(_mprepl_TCPServer_run, srv));
+#else
+        srv_thread->start(Callback<void()>(srv, _mprepl_TCPServer_run));
+#endif
     }
 }

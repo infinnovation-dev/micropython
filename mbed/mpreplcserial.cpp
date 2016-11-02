@@ -26,6 +26,10 @@
 
 #include "mprepl.h"
 
+#if defined(MBED_VERSION) || MBED_LIBRARY_VERSION >= 128 // 5.2
+#define CALLBACK_METHOD_OBJ 1
+#endif
+
 #ifndef LOGF
 #define LOGF(...)
 #endif
@@ -57,5 +61,9 @@ void
 mprepl_add_serial(serial_t *serial) {
     mprepl_add_client(_mprepl_serial_output, serial);
     Thread *serial_thread = new Thread();
+#if CALLBACK_METHOD_OBJ
     serial_thread->start(Callback<void()>(_mprepl_serial_input, serial));
+#else
+    serial_thread->start(Callback<void()>(serial, _mprepl_serial_input));
+#endif
 }
