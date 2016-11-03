@@ -52,7 +52,8 @@ else:
 
 # Sets of files to be synced
 extmod_files = ('machine_mem.h',
-                'machine_mem.c')
+                'machine_mem.c',
+                'virtpin.h')
 
 lib_files = ('utils/pyexec.h',
              'utils/pyexec.c',
