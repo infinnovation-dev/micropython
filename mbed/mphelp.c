@@ -41,17 +41,23 @@ STATIC const char help_text[] =
 #endif
     "  machine -- direct memory access and reset function\n"
     "  mbed    -- equivalents to mbed API classes:\n"
+#if MICROPY_MBED_DIGITALIN
+    "    DigitalIn\n"
+#endif
 #if MICROPY_MBED_DIGITALOUT
     "    DigitalOut\n"
 #endif
-#if MICROPY_MBED_DIGITALIN
-    "    DigitalIn\n"
+#if MICROPY_MBED_I2C
+    "    I2C\n"
 #endif
 #if MICROPY_MBED_PWMOUT
     "    PwmOut\n"
 #endif
 #if MICROPY_MBED_SERIAL
     "    Serial\n"
+#endif
+#if MICROPY_MBED_SPI
+    "    SPI\n"
 #endif
 #if MICROPY_PY_NET
     "  net     -- equivalents to mbed network classes:\n"

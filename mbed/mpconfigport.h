@@ -95,6 +95,11 @@ extern int mp__printf(const char *, ...);
 #else
     #define MICROPY_MBED_DIGITALOUT 0
 #endif
+#if DEVICE_I2C
+    #define MICROPY_MBED_I2C        MBED_CONF_MICROPYTHON_WITH_I2C
+#else
+    #define MICROPY_MBED_I2C        0
+#endif
 #if DEVICE_PWMOUT
     #define MICROPY_MBED_PWMOUT     MBED_CONF_MICROPYTHON_WITH_PWMOUT
 #else
@@ -104,6 +109,11 @@ extern int mp__printf(const char *, ...);
     #define MICROPY_MBED_SERIAL     MBED_CONF_MICROPYTHON_WITH_SERIAL
 #else
     #define MICROPY_MBED_SERIAL     0
+#endif
+#if DEVICE_SPI
+    #define MICROPY_MBED_SPI        MBED_CONF_MICROPYTHON_WITH_SPI
+#else
+    #define MICROPY_MBED_SPI        0
 #endif
 
 // Build "net" module

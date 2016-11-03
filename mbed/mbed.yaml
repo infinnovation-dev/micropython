@@ -36,6 +36,8 @@ sections:
       wait_us:
         args:
           - us int
+      us_ticker_read:
+        ret: int
   -
     condition: MICROPY_MBED_DIGITALIN
     classes:
@@ -70,6 +72,60 @@ sections:
             ret: int
           is_connected:
             ret: bool
+  -
+    condition: MICROPY_MBED_I2C
+    classes:
+      I2C:
+        args:
+          - sda int?cast=PinName
+          - scl int?cast=PinName
+        methods:
+          frequency:
+            args:
+              - hz int
+          read:
+            args:
+              - address int
+              - size int
+              - repeated bool?default=false
+            code:
+              - "vstr_t buf_v;"
+              - "vstr_init_len(&buf_v, size);"
+              - "mp_obj_t res[2];"
+              - "int ret = self->cpp->read(address, buf_v.buf, buf_v.len, repeated);"
+              - "res[0] = MP_OBJ_NEW_SMALL_INT(ret);"
+              - "if (ret <= 0) {"
+              - "    res[1] = mp_const_empty_bytes;"
+              - "} else {"
+              - "    buf_v.len = ret;"
+              - "    res[1] = mp_obj_new_str_from_vstr(&mp_type_bytes, &buf_v);"
+              - "}"
+              - "return mp_obj_new_tuple(2, res);"
+            ret: int
+          read1:
+            cppname: read
+            args:
+              - ack int
+            ret: int
+          write:
+            args:
+              - address int
+              - data buffer?cast=char*
+              - repeated bool?default=false
+            ret: int
+          write1:
+            cppname: write
+            args:
+              - data int
+            ret: int
+          start:
+            noargs: 1
+          stop:
+            noargs: 1
+          lock:
+            noargs: 1
+          unlock:
+            noargs: 1
   -
     condition: MICROPY_MBED_PWMOUT
     classes:
@@ -146,5 +202,28 @@ sections:
       FlowControlRTS: int
       FlowControlCTS: int
       FlowControlRTSCTS: int
-
-      
+  -
+    condition: MICROPY_MBED_SPI
+    classes:
+      SPI:
+        args:
+          - mosi int?cast=PinName
+          - miso int?cast=PinName
+          - sclk int?cast=PinName
+          - ssel int?default=NC;cast=PinName
+        methods:
+          format:
+            args:
+              - bits int
+              - mode int?default=0
+          frequency:
+            args:
+              - hz int?default=1000000
+          write:
+            args:
+              - value int
+            ret: int
+          lock:
+            noargs: 1
+          unlock:
+            nnoargs: 1

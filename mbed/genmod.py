@@ -380,7 +380,9 @@ class Gen(object):
                 lhs = ''
                 ret = 'mp_const_none'
             if with_self:
-                self.out('    %sself->cpp->%s(%s);' % (lhs, mname, cppargs))
+                # C++ method may differ from Python (e.g. overloaded method)
+                cppname = func.get('cppname', mname)
+                self.out('    %sself->cpp->%s(%s);' % (lhs, cppname, cppargs))
             else:
                 self.out('    %s%s(%s);' % (lhs, mname, cppargs))
             for line in conv:
@@ -489,8 +491,8 @@ class Arg(object):
                 arg = '%s.buf, %s.len' % (self.name, self.name)
             else:
                 arg = self.name
-                if 'cast' in self.d:
-                    arg = '(%s)%s' % (self.d['cast'], arg)
+            if 'cast' in self.d:
+                arg = '(%s)%s' % (self.d['cast'], arg)
         return arg
 
 if __name__=='__main__':
