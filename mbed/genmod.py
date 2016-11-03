@@ -153,7 +153,6 @@ class Gen(object):
         self.out('')
         self.out('const mp_obj_module_t mp_module_%s = {' % name)
         self.out('    .base = { &mp_type_module },')
-        self.out('    .name = MP_QSTR_%s,' % name)
         self.out('    .globals = (mp_obj_dict_t *)&%s_module_globals,' % self.prefix)
         self.out('};')
         self.out('')

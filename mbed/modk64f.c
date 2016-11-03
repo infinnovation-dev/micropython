@@ -432,7 +432,7 @@ const mreg_struct_obj_t k64f_UART5_obj = {
  *      Module
  *-----------------------------------------------------------------------*/
 STATIC const mp_rom_map_elem_t k64f_module_globals_table[] = {
-    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_mreg) },
+    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_k64f) },
     { MP_ROM_QSTR(MP_QSTR_DAC0), MP_ROM_PTR(&k64f_DAC0_obj) },
     { MP_ROM_QSTR(MP_QSTR_DAC1), MP_ROM_PTR(&k64f_DAC1_obj) },
     { MP_ROM_QSTR(MP_QSTR_DMA), MP_ROM_PTR(&k64f_DMA_obj) },
@@ -466,7 +466,6 @@ STATIC MP_DEFINE_CONST_DICT(k64f_module_globals,
 
 const mp_obj_module_t mp_module_k64f = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_k64f,
     .globals = (mp_obj_dict_t *)&k64f_module_globals,
 };
 
