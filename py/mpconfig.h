@@ -589,6 +589,11 @@ typedef double mp_float_t;
 #define MICROPY_PY_BUILTINS_STR_UNICODE (0)
 #endif
 
+// Whether str.center() method provided
+#ifndef MICROPY_PY_BUILTINS_STR_CENTER
+#define MICROPY_PY_BUILTINS_STR_CENTER (0)
+#endif
+
 // Whether str.splitlines() method provided
 #ifndef MICROPY_PY_BUILTINS_STR_SPLITLINES
 #define MICROPY_PY_BUILTINS_STR_SPLITLINES (0)
@@ -860,6 +865,11 @@ typedef double mp_float_t;
 
 #ifndef MICROPY_PY_MACHINE
 #define MICROPY_PY_MACHINE (0)
+#endif
+
+// Whether to include: time_pulse_us
+#ifndef MICROPY_PY_MACHINE_PULSE
+#define MICROPY_PY_MACHINE_PULSE (0)
 #endif
 
 #ifndef MICROPY_PY_MACHINE_I2C
