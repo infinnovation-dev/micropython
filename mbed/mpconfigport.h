@@ -85,8 +85,16 @@ extern int mp__printf(const char *, ...);
 #define MICROPY_PY_MBED             (1)
 //   Enable features in mbed module, when requested (mbed_lib.json) and
 //   available (mbed-os/hal/targets.json)
-#define MICROPY_MBED_DIGITALIN      MBED_CONF_MICROPYTHON_WITH_DIGITALIN
-#define MICROPY_MBED_DIGITALOUT     MBED_CONF_MICROPYTHON_WITH_DIGITALOUT
+#if DEVICE_DIGITALIN
+    #define MICROPY_MBED_DIGITALIN  MBED_CONF_MICROPYTHON_WITH_DIGITALIN
+#else
+    #define MICROPY_MBED_DIGITALIN  0
+#endif
+#if DEVICE_DIGITALOUT
+    #define MICROPY_MBED_DIGITALOUT MBED_CONF_MICROPYTHON_WITH_DIGITALOUT
+#else
+    #define MICROPY_MBED_DIGITALOUT 0
+#endif
 #if DEVICE_PWMOUT
     #define MICROPY_MBED_PWMOUT     MBED_CONF_MICROPYTHON_WITH_PWMOUT
 #else
@@ -95,7 +103,7 @@ extern int mp__printf(const char *, ...);
 #if DEVICE_SERIAL
     #define MICROPY_MBED_SERIAL     MBED_CONF_MICROPYTHON_WITH_SERIAL
 #else
-    #define MICROPY_MBED_PWMOUT     0
+    #define MICROPY_MBED_SERIAL     0
 #endif
 
 // Build "net" module
