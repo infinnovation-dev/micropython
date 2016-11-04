@@ -85,6 +85,16 @@ extern int mp__printf(const char *, ...);
 #define MICROPY_PY_MBED             (1)
 //   Enable features in mbed module, when requested (mbed_lib.json) and
 //   available (mbed-os/hal/targets.json)
+#if DEVICE_ANALOGIN
+    #define MICROPY_MBED_ANALOGIN   MBED_CONF_MICROPYTHON_WITH_ANALOGIN
+#else
+    #define MICROPY_MBED_ANALOGIN   0
+#endif
+#if DEVICE_ANALOGOUT
+    #define MICROPY_MBED_ANALOGOUT  MBED_CONF_MICROPYTHON_WITH_ANALOGOUT
+#else
+    #define MICROPY_MBED_ANALOGOUT  0
+#endif
 #if DEVICE_DIGITALIN
     #define MICROPY_MBED_DIGITALIN  MBED_CONF_MICROPYTHON_WITH_DIGITALIN
 #else

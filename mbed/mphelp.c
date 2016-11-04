@@ -41,6 +41,12 @@ STATIC const char help_text[] =
 #endif
     "  machine -- direct memory access and reset function\n"
     "  mbed    -- equivalents to mbed API classes:\n"
+#if MICROPY_MBED_ANALOGIN
+    "    AnalogIn\n"
+#endif
+#if MICROPY_MBED_ANALOGOUT
+    "    AnalogOut\n"
+#endif
 #if MICROPY_MBED_DIGITALIN
     "    DigitalIn\n"
 #endif

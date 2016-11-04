@@ -1,12 +1,20 @@
 {
     "name": "micropython",
     "config": {
-	"with-DigitalOut": {
-	    "help": "Enable MicroPython mbed.DigitalOut type",
+	"with-AnalogIn": {
+	    "help": "Enable MicroPython mbed.AnalogIn type",
+	    "value": true
+	},
+	"with-AnalogOut": {
+	    "help": "Enable MicroPython mbed.AnalogOut type",
 	    "value": true
 	},
 	"with-DigitalIn": {
 	    "help": "Enable MicroPython mbed.DigitalIn type",
+	    "value": true
+	},
+	"with-DigitalOut": {
+	    "help": "Enable MicroPython mbed.DigitalOut type",
 	    "value": true
 	},
 	"with-I2C": {

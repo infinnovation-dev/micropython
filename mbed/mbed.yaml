@@ -39,6 +39,32 @@ sections:
       us_ticker_read:
         ret: int
   -
+    condition: MICROPY_MBED_ANALOGIN
+    classes:
+      AnalogIn:
+        args:
+          - pin int?cast=PinName
+        methods:
+          read:
+            ret: float
+          read_u16:
+            ret: int
+  -
+    condition: MICROPY_MBED_ANALOGOUT
+    classes:
+      AnalogOut:
+        args:
+          - pin int?cast=PinName
+        methods:
+          write:
+            args:
+              - value float
+          write_u16:
+            args:
+              - value int?cast=uint16_t
+          read:
+            ret: float
+  -
     condition: MICROPY_MBED_DIGITALIN
     classes:
       DigitalIn:
