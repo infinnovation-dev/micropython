@@ -1,6 +1,10 @@
 {
     "name": "micropython",
     "config": {
+	"repl-history-size": {
+	    "help": "Number of history lines in interactive shell",
+	    "value": 20
+	},
 	"with-AnalogIn": {
 	    "help": "Enable MicroPython mbed.AnalogIn type",
 	    "value": true

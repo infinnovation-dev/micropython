@@ -233,6 +233,6 @@ extern const struct _mp_obj_module_t mp_module_k64f;
 
 // Use by readline.c
 #define MICROPY_PORT_ROOT_POINTERS \
-    const char *readline_hist[8]; \
+    const char *readline_hist[MBED_CONF_MICROPYTHON_REPL_HISTORY_SIZE]; \
     vstr_t *repl_line; \
 
