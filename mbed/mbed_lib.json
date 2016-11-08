@@ -1,6 +1,7 @@
 {
     "name": "micropython",
     "config": {
+	"present": true,
 	"repl-history-size": {
 	    "help": "Number of history lines in interactive shell",
 	    "value": 20
