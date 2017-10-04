@@ -30,9 +30,15 @@ void do_str(const char *src, mp_parse_input_kind_t input_kind) {
 static char *stack_top;
 static char heap[2048];
 
+extern void mp_hal_console_init(void);
+extern void mp_hal_stdout_tx_strn(const char *, int);
+
 int main(int argc, char **argv) {
     int stack_dummy;
     stack_top = (char*)&stack_dummy;
+
+    mp_hal_console_init();
+    mp_hal_stdout_tx_strn("mcux main\r\n", 11);
 
     #if MICROPY_ENABLE_GC
     gc_init(heap, heap + sizeof(heap));
