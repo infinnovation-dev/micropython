@@ -54,8 +54,11 @@ endif
 
 LIBS = -lm -lc
 
+SRC_MOD += modmachine.c
+
 SRC_C = \
 	main.c \
+	modmachine.c \
 	uart_core.c \
 	lib/utils/stdout_helpers.c \
 	lib/utils/pyexec.c \
