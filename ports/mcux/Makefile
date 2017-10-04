@@ -52,7 +52,7 @@ CFLAGS += -Os -DNDEBUG
 CFLAGS += -fdata-sections -ffunction-sections
 endif
 
-LIBS = -lc
+LIBS = -lm -lc
 
 SRC_C = \
 	main.c \
@@ -97,5 +97,4 @@ $(BUILD)/%.o: %.S
 
 vpath %.c $(MCUX)/devices/$(DEVICE)/gcc $(MCUX)/devices/$(DEVICE) $(MCUX)/devices/$(DEVICE)/drivers
 $(BUILD)/%.o: %.c
-	$(ECHO) "CC $<"
-	$(Q)$(CC) $(CFLAGS) -c -o $@ $<
+	$(call compile_c)
