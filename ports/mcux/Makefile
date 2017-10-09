@@ -28,8 +28,9 @@ INC += -I$(MCUX)/devices/$(DEVICE)
 INC += -I$(MCUX)/CMSIS/Include
 
 FSL_MOD += \
-	fsl_uart.o \
 	fsl_clock.o \
+	fsl_sim.o \
+	fsl_uart.o \
 
 FSL_O = $(addprefix $(BUILD)/, $(FSL_MOD))
 
