@@ -49,6 +49,7 @@
 #define MICROPY_PY_MATH             (0)
 #define MICROPY_PY_CMATH            (0)
 #define MICROPY_PY_IO               (0)
+#define MICROPY_PY_MACHINE          (1)
 #define MICROPY_PY_STRUCT           (0)
 #define MICROPY_PY_SYS              (1)
 #define  MICROPY_PY_SYS_EXC_INFO    (1)
