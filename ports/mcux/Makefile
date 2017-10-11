@@ -55,11 +55,14 @@ endif
 
 LIBS = -lm -lc
 
-SRC_MOD += modmachine.c
+# Files using QSTR
+SRC_MOD += modmachine.c modk64f.c mreg.c
 
 SRC_C = \
 	main.c \
+	modk64f.c \
 	modmachine.c \
+	mreg.c \
 	uart_core.c \
 	lib/utils/stdout_helpers.c \
 	lib/utils/pyexec.c \
