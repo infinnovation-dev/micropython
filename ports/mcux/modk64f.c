@@ -137,6 +137,72 @@ const mreg_struct_obj_t k64f_DMAMUX_obj = {
 #undef MREG_TYPE
 
 /*-----------------------------------------------------------------------
+ *      ENET
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE ENET_Type
+STATIC const mreg_field_t k64f_ENET_CHANNEL_fields[] = {
+    MREG_ITEM_U32(CHANNEL, TCSR),
+    MREG_ITEM_U32(CHANNEL, TCCR),    
+    {0},
+};
+
+STATIC const mreg_field_t k64f_ENET_fields[] = {
+    MREG_U32(EIR),
+    MREG_U32(EIMR),
+    MREG_U32(RDAR),
+    MREG_U32(TDAR),
+    MREG_U32(ECR),
+    MREG_U32(MMFR),
+    MREG_U32(MSCR),
+    MREG_U32(MIBC),
+    MREG_U32(RCR),
+    MREG_U32(TCR),
+    MREG_U32(PALR),
+    MREG_U32(PAUR),
+    MREG_U32(OPD),
+    MREG_U32(IAUR),
+    MREG_U32(IALR),
+    MREG_U32(GAUR),
+    MREG_U32(GALR),
+    MREG_U32(TFWR),
+    MREG_U32(RDSR),
+    MREG_U32(TDSR),
+    MREG_U32(MRBR),
+    MREG_U32(RSFL),
+    MREG_U32(RSEM),
+    MREG_U32(RAEM),
+    MREG_U32(RAFL),
+    MREG_U32(TSEM),
+    MREG_U32(TAEM),
+    MREG_U32(TAFL),
+    MREG_U32(TIPG),
+    MREG_U32(FTRL),
+    MREG_U32(TACC),
+    MREG_U32(RACC),
+    // RMON_T_* omitted
+    // IEEE_T_* omitted
+    // RMON_R_* omitted
+    // IEEE_R_* omitted
+    MREG_U32(ATCR),
+    MREG_U32(ATVR),
+    MREG_U32(ATOFF),
+    MREG_U32(ATPER),
+    MREG_U32(ATCOR),
+    MREG_U32(ATINC),
+    MREG_U32(ATSTMP),
+    MREG_U32(TGSR),
+    MREG_ARRAY_STRUCT(CHANNEL, k64f_ENET_CHANNEL_fields),
+    {0},
+};
+#undef MREG_TYPE
+
+const mreg_struct_obj_t k64f_ENET_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)ENET,
+    .fields = k64f_ENET_fields,
+};
+
+/*-----------------------------------------------------------------------
  *      FTM
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE FTM_Type
@@ -245,6 +311,45 @@ const mreg_struct_obj_t k64f_PTE_obj = {
 };
 
 /*-----------------------------------------------------------------------
+ *      I2C
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE I2C_Type
+const mreg_field_t k64f_I2C_fields[] = {
+    MREG_U8(A1),
+    MREG_U8(F),
+    MREG_U8(C1),
+    MREG_U8(S),
+    MREG_U8(D),
+    MREG_U8(C2),
+    MREG_U8(FLT),
+    MREG_U8(RA),
+    MREG_U8(SMB),
+    MREG_U8(A2),
+    MREG_U8(SLTH),
+    MREG_U8(SLTL),
+    {0},
+};
+#undef MREG_TYPE
+
+const mreg_struct_obj_t k64f_I2C0_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)I2C0,
+    .fields = k64f_I2C_fields,
+};
+
+const mreg_struct_obj_t k64f_I2C1_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)I2C1,
+    .fields = k64f_I2C_fields,
+};
+
+const mreg_struct_obj_t k64f_I2C2_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)I2C2,
+    .fields = k64f_I2C_fields,
+};
+
+/*-----------------------------------------------------------------------
  *      PIT
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE PIT_Type
@@ -316,6 +421,42 @@ const mreg_struct_obj_t k64f_PORTE_obj = {
 };
 
 /*-----------------------------------------------------------------------
+ *      SDHC
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE SDHC_Type
+const mreg_field_t k64f_SDHC_fields[] = {
+    MREG_U32(DSADDR),
+    MREG_U32(BLKATTR),
+    MREG_U32(CMDARG),
+    MREG_U32(XFERTYP),
+    MREG_ARRAY_U32(CMDRSP),             /* __I */
+    MREG_U32(DATPORT),
+    MREG_U32(PRSSTAT),                  /* __I */
+    MREG_U32(PROCTL),
+    MREG_U32(SYSCTL),
+    MREG_U32(IRQSTAT),
+    MREG_U32(IRQSTATEN),
+    MREG_U32(IRQSIGEN),
+    MREG_U32(AC12ERR),                  /* __I */
+    MREG_U32(HTCAPBLT),                 /* __I */
+    MREG_U32(WML),
+    // MREG_U32(FEVT),                     /* __O */
+    MREG_U32(ADMAES),                   /* __I */
+    MREG_U32(ADSADDR),
+    MREG_U32(VENDOR),
+    MREG_U32(MMCBOOT),
+    MREG_U32(HOSTVER),                  /* __I */
+    {0},
+};
+#undef MREG_TYPE
+
+const mreg_struct_obj_t k64f_SDHC_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)SDHC,
+    .fields = k64f_SDHC_fields,
+};
+
+/*-----------------------------------------------------------------------
  *      SIM
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE SIM_Type
@@ -350,6 +491,48 @@ const mreg_struct_obj_t k64f_SIM_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)SIM,
     .fields = k64f_SIM_fields,
+};
+
+/*-----------------------------------------------------------------------
+ *      SPI
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE SPI_Type
+const mreg_field_t k64f_SPI_fields[] = {
+    MREG_U32(MCR),
+    MREG_U32(TCR),
+    MREG_ARRAY_U32(CTAR),
+    MREG_U32(SR),
+    MREG_U32(RSER),
+    MREG_U32(PUSHR),
+    MREG_U32(POPR),                     /* __I */
+    MREG_U32(TXFR0),                    /* __I */
+    MREG_U32(TXFR1),                    /* __I */
+    MREG_U32(TXFR2),                    /* __I */
+    MREG_U32(TXFR3),                    /* __I */
+    MREG_U32(RXFR0),                    /* __I */
+    MREG_U32(RXFR1),                    /* __I */
+    MREG_U32(RXFR2),                    /* __I */
+    MREG_U32(RXFR3),                    /* __I */
+    {0},
+};
+#undef MREG_TYPE
+
+const mreg_struct_obj_t k64f_SPI0_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)SPI0,
+    .fields = k64f_SPI_fields,
+};
+
+const mreg_struct_obj_t k64f_SPI1_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)SPI1,
+    .fields = k64f_SPI_fields,
+};
+
+const mreg_struct_obj_t k64f_SPI2_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)SPI2,
+    .fields = k64f_SPI_fields,
 };
 
 /*-----------------------------------------------------------------------
@@ -437,10 +620,14 @@ STATIC const mp_rom_map_elem_t k64f_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_DAC1), MP_ROM_PTR(&k64f_DAC1_obj) },
     { MP_ROM_QSTR(MP_QSTR_DMA), MP_ROM_PTR(&k64f_DMA_obj) },
     { MP_ROM_QSTR(MP_QSTR_DMAMUX), MP_ROM_PTR(&k64f_DMAMUX_obj) },
+    { MP_ROM_QSTR(MP_QSTR_ENET), MP_ROM_PTR(&k64f_ENET_obj) },
     { MP_ROM_QSTR(MP_QSTR_FTM0), MP_ROM_PTR(&k64f_FTM0_obj) },
     { MP_ROM_QSTR(MP_QSTR_FTM1), MP_ROM_PTR(&k64f_FTM1_obj) },
     { MP_ROM_QSTR(MP_QSTR_FTM2), MP_ROM_PTR(&k64f_FTM2_obj) },
     { MP_ROM_QSTR(MP_QSTR_FTM3), MP_ROM_PTR(&k64f_FTM3_obj) },
+    { MP_ROM_QSTR(MP_QSTR_I2C0), MP_ROM_PTR(&k64f_I2C0_obj) },
+    { MP_ROM_QSTR(MP_QSTR_I2C1), MP_ROM_PTR(&k64f_I2C1_obj) },
+    { MP_ROM_QSTR(MP_QSTR_I2C2), MP_ROM_PTR(&k64f_I2C2_obj) },
     { MP_ROM_QSTR(MP_QSTR_PIT), MP_ROM_PTR(&k64f_PIT_obj) },
     { MP_ROM_QSTR(MP_QSTR_PORTA), MP_ROM_PTR(&k64f_PORTA_obj) },
     { MP_ROM_QSTR(MP_QSTR_PORTB), MP_ROM_PTR(&k64f_PORTB_obj) },
@@ -452,7 +639,11 @@ STATIC const mp_rom_map_elem_t k64f_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_PTC), MP_ROM_PTR(&k64f_PTC_obj) },
     { MP_ROM_QSTR(MP_QSTR_PTD), MP_ROM_PTR(&k64f_PTD_obj) },
     { MP_ROM_QSTR(MP_QSTR_PTE), MP_ROM_PTR(&k64f_PTE_obj) },
+    { MP_ROM_QSTR(MP_QSTR_SDHC), MP_ROM_PTR(&k64f_SDHC_obj) },
     { MP_ROM_QSTR(MP_QSTR_SIM), MP_ROM_PTR(&k64f_SIM_obj) },
+    { MP_ROM_QSTR(MP_QSTR_SPI0), MP_ROM_PTR(&k64f_SPI0_obj) },
+    { MP_ROM_QSTR(MP_QSTR_SPI1), MP_ROM_PTR(&k64f_SPI1_obj) },
+    { MP_ROM_QSTR(MP_QSTR_SPI2), MP_ROM_PTR(&k64f_SPI2_obj) },
     { MP_ROM_QSTR(MP_QSTR_UART0), MP_ROM_PTR(&k64f_UART0_obj) },
     { MP_ROM_QSTR(MP_QSTR_UART1), MP_ROM_PTR(&k64f_UART1_obj) },
     { MP_ROM_QSTR(MP_QSTR_UART2), MP_ROM_PTR(&k64f_UART2_obj) },
