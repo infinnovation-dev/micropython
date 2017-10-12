@@ -421,6 +421,25 @@ const mreg_struct_obj_t k64f_PORTE_obj = {
 };
 
 /*-----------------------------------------------------------------------
+ *      RNG
+ *-----------------------------------------------------------------------*/
+#define MREG_TYPE RNG_Type
+const mreg_field_t k64f_RNG_fields[] = {
+    MREG_U32(CR),
+    MREG_U32(SR),                       /* __I */
+    MREG_U32(ER),                       /* __O */
+    MREG_U32(OR),                       /* __I */
+    {0},
+};
+#undef MREG_TYPE
+
+const mreg_struct_obj_t k64f_RNG_obj = {
+    .base = { &mreg_struct_type },
+    .ptr = (char *)RNG,
+    .fields = k64f_RNG_fields,
+};
+
+/*-----------------------------------------------------------------------
  *      SDHC
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE SDHC_Type
@@ -639,6 +658,7 @@ STATIC const mp_rom_map_elem_t k64f_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_PTC), MP_ROM_PTR(&k64f_PTC_obj) },
     { MP_ROM_QSTR(MP_QSTR_PTD), MP_ROM_PTR(&k64f_PTD_obj) },
     { MP_ROM_QSTR(MP_QSTR_PTE), MP_ROM_PTR(&k64f_PTE_obj) },
+    { MP_ROM_QSTR(MP_QSTR_RNG), MP_ROM_PTR(&k64f_RNG_obj) },
     { MP_ROM_QSTR(MP_QSTR_SDHC), MP_ROM_PTR(&k64f_SDHC_obj) },
     { MP_ROM_QSTR(MP_QSTR_SIM), MP_ROM_PTR(&k64f_SIM_obj) },
     { MP_ROM_QSTR(MP_QSTR_SPI0), MP_ROM_PTR(&k64f_SPI0_obj) },
