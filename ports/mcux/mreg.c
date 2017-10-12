@@ -75,7 +75,7 @@ STATIC void mreg_struct_attr(mp_obj_t self_in, qstr qattr, mp_obj_t *dest) {
                         break;
                     case MREG_TYPE_U32:;
                         uint32_t value32 = *(uint32_t *)fptr;
-                        dest[0] = mp_obj_new_int(value32);
+                        dest[0] = mp_obj_new_int_from_uint(value32);
                         break;
                     }
                 }
@@ -147,7 +147,11 @@ STATIC void mreg_struct_print_helper(const mp_print_t *print, char *ptr, const m
 
 STATIC void mreg_struct_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
     mreg_struct_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    mreg_struct_print_helper(print, self->ptr, self->fields, kind);
+    if (kind == PRINT_REPR) {
+        mp_printf(print, "<mreg.Struct>");
+    } else {
+        mreg_struct_print_helper(print, self->ptr, self->fields, kind);
+    }
 }
 
 const mp_obj_type_t mreg_struct_type = {
@@ -278,7 +282,11 @@ STATIC void mreg_array_print_helper(const mp_print_t *print, char *ptr, const mr
 
 STATIC void mreg_array_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
     mreg_array_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    mreg_array_print_helper(print, self->ptr, self->desc, kind);
+    if (kind == PRINT_REPR) {
+        mp_printf(print, "<mreg.Array[%u]>", self->desc->len);
+    } else {
+        mreg_array_print_helper(print, self->ptr, self->desc, kind);
+    }
 }
 
 STATIC mp_obj_t mreg_array_unary_op(mp_unary_op_t op, mp_obj_t self_in) {
