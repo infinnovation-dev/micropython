@@ -46,13 +46,13 @@ STATIC const mreg_field_t k64f_DAC_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_DAC0_obj = {
+STATIC const mreg_struct_obj_t k64f_DAC0_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)DAC0,
     .fields = k64f_DAC_fields,
 };
 
-const mreg_struct_obj_t k64f_DAC1_obj = {
+STATIC const mreg_struct_obj_t k64f_DAC1_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)DAC1,
     .fields = k64f_DAC_fields,
@@ -114,7 +114,7 @@ STATIC const mreg_field_t k64f_DMA_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_DMA_obj = {
+STATIC const mreg_struct_obj_t k64f_DMA_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)DMA0,
     .fields = k64f_DMA_fields,
@@ -129,7 +129,7 @@ STATIC const mreg_field_t k64f_DMAMUX_fields[] = {
     {0},
 };
 
-const mreg_struct_obj_t k64f_DMAMUX_obj = {
+STATIC const mreg_struct_obj_t k64f_DMAMUX_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)DMAMUX,
     .fields = k64f_DMAMUX_fields,
@@ -196,7 +196,7 @@ STATIC const mreg_field_t k64f_ENET_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_ENET_obj = {
+STATIC const mreg_struct_obj_t k64f_ENET_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)ENET,
     .fields = k64f_ENET_fields,
@@ -241,25 +241,25 @@ STATIC const mreg_field_t k64f_FTM_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_FTM0_obj = {
+STATIC const mreg_struct_obj_t k64f_FTM0_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)FTM0,
     .fields = k64f_FTM_fields,
 };
 
-const mreg_struct_obj_t k64f_FTM1_obj = {
+STATIC const mreg_struct_obj_t k64f_FTM1_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)FTM1,
     .fields = k64f_FTM_fields,
 };
 
-const mreg_struct_obj_t k64f_FTM2_obj = {
+STATIC const mreg_struct_obj_t k64f_FTM2_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)FTM2,
     .fields = k64f_FTM_fields,
 };
 
-const mreg_struct_obj_t k64f_FTM3_obj = {
+STATIC const mreg_struct_obj_t k64f_FTM3_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)FTM3,
     .fields = k64f_FTM_fields,
@@ -269,7 +269,7 @@ const mreg_struct_obj_t k64f_FTM3_obj = {
  *      GPIO
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE GPIO_Type
-const mreg_field_t k64f_GPIO_fields[] = {
+STATIC const mreg_field_t k64f_GPIO_fields[] = {
     MREG_U32(PDOR),
     MREG_U32(PSOR),                     /* __O */
     MREG_U32(PCOR),                     /* __O */
@@ -280,31 +280,31 @@ const mreg_field_t k64f_GPIO_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_PTA_obj = {
+STATIC const mreg_struct_obj_t k64f_PTA_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PTA,
     .fields = k64f_GPIO_fields,
 };
 
-const mreg_struct_obj_t k64f_PTB_obj = {
+STATIC const mreg_struct_obj_t k64f_PTB_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PTB,
     .fields = k64f_GPIO_fields,
 };
 
-const mreg_struct_obj_t k64f_PTC_obj = {
+STATIC const mreg_struct_obj_t k64f_PTC_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PTC,
     .fields = k64f_GPIO_fields,
 };
 
-const mreg_struct_obj_t k64f_PTD_obj = {
+STATIC const mreg_struct_obj_t k64f_PTD_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PTD,
     .fields = k64f_GPIO_fields,
 };
 
-const mreg_struct_obj_t k64f_PTE_obj = {
+STATIC const mreg_struct_obj_t k64f_PTE_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PTE,
     .fields = k64f_GPIO_fields,
@@ -314,7 +314,7 @@ const mreg_struct_obj_t k64f_PTE_obj = {
  *      I2C
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE I2C_Type
-const mreg_field_t k64f_I2C_fields[] = {
+STATIC const mreg_field_t k64f_I2C_fields[] = {
     MREG_U8(A1),
     MREG_U8(F),
     MREG_U8(C1),
@@ -331,19 +331,19 @@ const mreg_field_t k64f_I2C_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_I2C0_obj = {
+STATIC const mreg_struct_obj_t k64f_I2C0_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)I2C0,
     .fields = k64f_I2C_fields,
 };
 
-const mreg_struct_obj_t k64f_I2C1_obj = {
+STATIC const mreg_struct_obj_t k64f_I2C1_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)I2C1,
     .fields = k64f_I2C_fields,
 };
 
-const mreg_struct_obj_t k64f_I2C2_obj = {
+STATIC const mreg_struct_obj_t k64f_I2C2_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)I2C2,
     .fields = k64f_I2C_fields,
@@ -353,7 +353,7 @@ const mreg_struct_obj_t k64f_I2C2_obj = {
  *      PIT
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE PIT_Type
-const mreg_field_t k64f_PIT_CHANNEL_fields[] = {
+STATIC const mreg_field_t k64f_PIT_CHANNEL_fields[] = {
     MREG_ITEM_U32(CHANNEL, LDVAL),
     MREG_ITEM_U32(CHANNEL, CVAL),
     MREG_ITEM_U32(CHANNEL, TCTRL),
@@ -361,14 +361,14 @@ const mreg_field_t k64f_PIT_CHANNEL_fields[] = {
     {0},
 };
 
-const mreg_field_t k64f_PIT_fields[] = {
+STATIC const mreg_field_t k64f_PIT_fields[] = {
     MREG_U32(MCR),
     MREG_ARRAY_STRUCT(CHANNEL, k64f_PIT_CHANNEL_fields),
     {0},
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_PIT_obj = {
+STATIC const mreg_struct_obj_t k64f_PIT_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PIT,
     .fields = k64f_PIT_fields,
@@ -378,7 +378,7 @@ const mreg_struct_obj_t k64f_PIT_obj = {
  *      PORT
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE PORT_Type
-const mreg_field_t k64f_PORT_fields[] = {
+STATIC const mreg_field_t k64f_PORT_fields[] = {
     MREG_ARRAY_U32(PCR),
     // __O GPCLR
     // __O GPCHR
@@ -390,31 +390,31 @@ const mreg_field_t k64f_PORT_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_PORTA_obj = {
+STATIC const mreg_struct_obj_t k64f_PORTA_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PORTA,
     .fields = k64f_PORT_fields,
 };
 
-const mreg_struct_obj_t k64f_PORTB_obj = {
+STATIC const mreg_struct_obj_t k64f_PORTB_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PORTB,
     .fields = k64f_PORT_fields,
 };
 
-const mreg_struct_obj_t k64f_PORTC_obj = {
+STATIC const mreg_struct_obj_t k64f_PORTC_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PORTC,
     .fields = k64f_PORT_fields,
 };
 
-const mreg_struct_obj_t k64f_PORTD_obj = {
+STATIC const mreg_struct_obj_t k64f_PORTD_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PORTD,
     .fields = k64f_PORT_fields,
 };
 
-const mreg_struct_obj_t k64f_PORTE_obj = {
+STATIC const mreg_struct_obj_t k64f_PORTE_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)PORTE,
     .fields = k64f_PORT_fields,
@@ -424,7 +424,7 @@ const mreg_struct_obj_t k64f_PORTE_obj = {
  *      RNG
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE RNG_Type
-const mreg_field_t k64f_RNG_fields[] = {
+STATIC const mreg_field_t k64f_RNG_fields[] = {
     MREG_U32(CR),
     MREG_U32(SR),                       /* __I */
     MREG_U32(ER),                       /* __O */
@@ -433,7 +433,7 @@ const mreg_field_t k64f_RNG_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_RNG_obj = {
+STATIC const mreg_struct_obj_t k64f_RNG_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)RNG,
     .fields = k64f_RNG_fields,
@@ -443,7 +443,7 @@ const mreg_struct_obj_t k64f_RNG_obj = {
  *      SDHC
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE SDHC_Type
-const mreg_field_t k64f_SDHC_fields[] = {
+STATIC const mreg_field_t k64f_SDHC_fields[] = {
     MREG_U32(DSADDR),
     MREG_U32(BLKATTR),
     MREG_U32(CMDARG),
@@ -469,7 +469,7 @@ const mreg_field_t k64f_SDHC_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_SDHC_obj = {
+STATIC const mreg_struct_obj_t k64f_SDHC_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)SDHC,
     .fields = k64f_SDHC_fields,
@@ -479,7 +479,7 @@ const mreg_struct_obj_t k64f_SDHC_obj = {
  *      SIM
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE SIM_Type
-const mreg_field_t k64f_SIM_fields[] = {
+STATIC const mreg_field_t k64f_SIM_fields[] = {
     MREG_U32(SOPT1),
     MREG_U32(SOPT1CFG),
     MREG_U32(SOPT2),
@@ -506,7 +506,7 @@ const mreg_field_t k64f_SIM_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_SIM_obj = {
+STATIC const mreg_struct_obj_t k64f_SIM_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)SIM,
     .fields = k64f_SIM_fields,
@@ -516,7 +516,7 @@ const mreg_struct_obj_t k64f_SIM_obj = {
  *      SPI
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE SPI_Type
-const mreg_field_t k64f_SPI_fields[] = {
+STATIC const mreg_field_t k64f_SPI_fields[] = {
     MREG_U32(MCR),
     MREG_U32(TCR),
     MREG_ARRAY_U32(CTAR),
@@ -536,19 +536,19 @@ const mreg_field_t k64f_SPI_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_SPI0_obj = {
+STATIC const mreg_struct_obj_t k64f_SPI0_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)SPI0,
     .fields = k64f_SPI_fields,
 };
 
-const mreg_struct_obj_t k64f_SPI1_obj = {
+STATIC const mreg_struct_obj_t k64f_SPI1_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)SPI1,
     .fields = k64f_SPI_fields,
 };
 
-const mreg_struct_obj_t k64f_SPI2_obj = {
+STATIC const mreg_struct_obj_t k64f_SPI2_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)SPI2,
     .fields = k64f_SPI_fields,
@@ -558,7 +558,7 @@ const mreg_struct_obj_t k64f_SPI2_obj = {
  *      UART
  *-----------------------------------------------------------------------*/
 #define MREG_TYPE UART_Type
-const mreg_field_t k64f_UART_fields[] = {
+STATIC const mreg_field_t k64f_UART_fields[] = {
     MREG_U8(BDH),
     MREG_U8(BDL),
     MREG_U8(C1),
@@ -594,37 +594,37 @@ const mreg_field_t k64f_UART_fields[] = {
 };
 #undef MREG_TYPE
 
-const mreg_struct_obj_t k64f_UART0_obj = {
+STATIC const mreg_struct_obj_t k64f_UART0_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)UART0,
     .fields = k64f_UART_fields,
 };
 
-const mreg_struct_obj_t k64f_UART1_obj = {
+STATIC const mreg_struct_obj_t k64f_UART1_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)UART1,
     .fields = k64f_UART_fields,
 };
 
-const mreg_struct_obj_t k64f_UART2_obj = {
+STATIC const mreg_struct_obj_t k64f_UART2_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)UART2,
     .fields = k64f_UART_fields,
 };
 
-const mreg_struct_obj_t k64f_UART3_obj = {
+STATIC const mreg_struct_obj_t k64f_UART3_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)UART3,
     .fields = k64f_UART_fields,
 };
 
-const mreg_struct_obj_t k64f_UART4_obj = {
+STATIC const mreg_struct_obj_t k64f_UART4_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)UART4,
     .fields = k64f_UART_fields,
 };
 
-const mreg_struct_obj_t k64f_UART5_obj = {
+STATIC const mreg_struct_obj_t k64f_UART5_obj = {
     .base = { &mreg_struct_type },
     .ptr = (char *)UART5,
     .fields = k64f_UART_fields,
