@@ -6,11 +6,14 @@
 #include "fsl_sim.h"
 
 // machine.freq()
-STATIC mp_obj_t machine_freq(void) {
-    //return mp_obj_new_int(CLOCK_GetCoreSysClkFreq());
-    return mp_obj_new_int(CLOCK_GetPlatClkFreq());
+STATIC mp_obj_t machine_freq(size_t n_args, const mp_obj_t *args) {
+    clock_name_t clock = kCLOCK_CoreSysClk;
+    if (n_args > 0) {
+        clock = (clock_name_t) mp_obj_get_int(args[0]);
+    }
+    return mp_obj_new_int_from_uint(CLOCK_GetFreq(clock));
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(machine_freq_obj, machine_freq);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(machine_freq_obj, 0, 1, machine_freq);
 
 // machine.reset()
 STATIC NORETURN mp_obj_t machine_reset(void) {
