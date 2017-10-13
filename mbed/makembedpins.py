@@ -31,7 +31,7 @@ extract the { qstr, int } initialisers for a map, with appropriate
 from __future__ import print_function
 import re
 
-enumRX = re.compile(r'{([^}]*?)} PinName', re.DOTALL)
+enumRX = re.compile(r'{([^{}]*?)} PinName', re.DOTALL)
 ifsymeqRX = re.compile(r'(?:(#(?:if|elif|else|endif).*)|(\w+)\s*(?:=[^,]+)?,?)', re.MULTILINE)
 c_commentRX = re.compile(r'/\*.*?\*/', re.DOTALL)
 cpp_commentRX = re.compile(r'//.*')
