@@ -36,7 +36,18 @@
 // Don't try to include mbed-specific files if proprocessing qstr
 #if __MBED__
 #include "cmsis.h"
+#include "fsl_clock.h"
+#include "fsl_sim.h"
 #endif
+
+STATIC mp_obj_t machine_freq(size_t n_args, const mp_obj_t *args) {
+    clock_name_t clock = kCLOCK_CoreSysClk;
+    if (n_args > 0) {
+        clock = (clock_name_t) mp_obj_get_int(args[0]);
+    }
+    return mp_obj_new_int_from_uint(CLOCK_GetFreq(clock));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(machine_freq_obj, 0, 1, machine_freq);
 
 /** \brief Reset the board.
  *
@@ -49,12 +60,21 @@ STATIC mp_obj_t machine_reset(void) {
 }
 MP_DEFINE_CONST_FUN_OBJ_0(machine_reset_obj, machine_reset);
 
+STATIC mp_obj_t machine_unique_id(void) {
+    sim_uid_t uid;
+    SIM_GetUniqueId(&uid);
+    return mp_obj_new_bytes((byte *)&uid, sizeof(uid));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(machine_unique_id_obj, machine_unique_id);
+
 STATIC const mp_rom_map_elem_t machine_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_machine) },
     { MP_ROM_QSTR(MP_QSTR_reset), MP_ROM_PTR(&machine_reset_obj) },
     { MP_ROM_QSTR(MP_QSTR_mem8), MP_ROM_PTR(&machine_mem8_obj) },
     { MP_ROM_QSTR(MP_QSTR_mem16), MP_ROM_PTR(&machine_mem16_obj) },
     { MP_ROM_QSTR(MP_QSTR_mem32), MP_ROM_PTR(&machine_mem32_obj) },
+    { MP_ROM_QSTR(MP_QSTR_freq), MP_ROM_PTR(&machine_freq_obj) },
+    { MP_ROM_QSTR(MP_QSTR_unique_id), MP_ROM_PTR(&machine_unique_id_obj) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(machine_module_globals, machine_module_globals_table);
