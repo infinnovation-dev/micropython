@@ -32,7 +32,7 @@ ifeq ($(BUILD_VERBOSE),0)
 $(info Use make V=1 or set BUILD_VERBOSE in your environment to increase build verbosity.)
 endif
 
-# default settings; can be overriden in main Makefile
+# default settings; can be overridden in main Makefile
 
 PY_SRC ?= $(TOP)/py
 BUILD ?= build
@@ -58,7 +58,15 @@ CXX += -m32
 LD += -m32
 endif
 
-MAKE_FROZEN = ../tools/make-frozen.py
+MAKE_FROZEN = $(TOP)/tools/make-frozen.py
+# allow mpy-cross (for WSL) and mpy-cross.exe (for cygwin) to coexist
+ifeq ($(OS),Windows_NT)
+MPY_CROSS = $(TOP)/mpy-cross/mpy-cross.exe
+PROG_EXT = .exe
+else
+MPY_CROSS = $(TOP)/mpy-cross/mpy-cross
+endif
+MPY_TOOL = $(TOP)/tools/mpy-tool.py
 
 all:
 .PHONY: all

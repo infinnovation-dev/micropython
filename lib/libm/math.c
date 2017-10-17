@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -36,69 +36,6 @@ typedef union {
     };
 } float_s_t;
 
-typedef union {
-    double d;
-    struct {
-        uint64_t m : 52;
-        uint64_t e : 11;
-        uint64_t s : 1;
-    };
-} double_s_t;
-
-#if defined(__thumb__)
-
-double __attribute__((pcs("aapcs"))) __aeabi_i2d(int32_t x) {
-    return (float)x;
-}
-
-// TODO
-long long __attribute__((pcs("aapcs"))) __aeabi_f2lz(float x) {
-    return (long)x;
-}
-
-double __attribute__((pcs("aapcs"))) __aeabi_f2d(float x) {
-    float_s_t fx={0};
-    double_s_t dx={0};
-
-    fx.f = x;
-    dx.s = (fx.s);
-    dx.e = (fx.e-127+1023) & 0x7FF;
-    dx.m = fx.m;
-    dx.m <<=(52-23); // left justify
-    return dx.d;
-}
-
-float __attribute__((pcs("aapcs"))) __aeabi_d2f(double x) {
-    float_s_t fx={0};
-    double_s_t dx={0};
-
-    dx.d = x;
-    fx.s = (dx.s);
-    fx.e = (dx.e-1023+127) & 0xFF;
-    fx.m = (dx.m>>(52-23)); // right justify
-    return fx.f;
-}
-
-double __aeabi_dmul(double x , double y) {
-    return 0.0;
-
-}
-
-#endif // defined(__thumb__)
-
-// TODO this needs a better way of testing for Thumb2 FP hardware
-#if defined(__thumb2__)
-
-float sqrtf(float x) {
-    asm volatile (
-            "vsqrt.f32  %[r], %[x]\n"
-            : [r] "=t" (x)
-            : [x] "t"  (x));
-    return x;
-}
-
-#endif
-
 #ifndef NDEBUG
 float copysignf(float x, float y) {
     float_s_t fx={.f = x};
@@ -124,7 +61,12 @@ float log2f(float x) { return logf(x) / (float)_M_LN2; }
 static const float _M_LN10 = 2.30258509299404; // 0x40135d8e
 float log10f(float x) { return logf(x) / (float)_M_LN10; }
 
-float tanhf(float x) { return sinhf(x) / coshf(x); }
+float tanhf(float x) {
+    if (isinf(x)) {
+        return copysignf(1, x);
+    }
+    return sinhf(x) / coshf(x);
+}
 
 /*****************************************************************************/
 /*****************************************************************************/
