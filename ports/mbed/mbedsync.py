@@ -34,8 +34,8 @@ import shutil
 import subprocess
 
 # Default locations
-GITDIR = '/home/colin/micropython'
-HGPARENT = '/home/colin/mbed'
+GITDIR = os.path.expanduser('~/micropython')
+HGPARENT = os.path.expanduser('~/mbed')
 branch = subprocess.check_output(['git','rev-parse','--abbrev-ref','HEAD'],
                                  cwd=GITDIR).strip()
 assert branch[:5] == 'mbed-'
@@ -117,19 +117,19 @@ class MbedSync(object):
                       self.libpath('lib', *file.split('/')))
         # mbed-specifics
         for file in mbed_lib_files:
-            self.copy(self.gitpath('mbed', *file.split('/')),
+            self.copy(self.gitpath('ports','mbed', *file.split('/')),
                       self.libpath(*file.split('/')))
         for afile, bfile in other_lib_files:
-            self.copy(self.gitpath('mbed', *afile.split('/')),
+            self.copy(self.gitpath('ports','mbed', *afile.split('/')),
                       self.libpath(*bfile.split('/')))
         # mbed repl
         for file in mbed_repl_files:
-            self.copy(self.gitpath('mbed', *file.split('/')),
+            self.copy(self.gitpath('ports','mbed', *file.split('/')),
                       self.replpath(*file.split('/')))
 
         # other files generated in git dir
         for afile, bfile in mbed_gen_files:
-            self.a_master(self.gitpath('mbed', *afile.split('/')),
+            self.a_master(self.gitpath('ports','mbed', *afile.split('/')),
                           self.libpath(*bfile.split('/')))
 
     def gitpath(self, *path):

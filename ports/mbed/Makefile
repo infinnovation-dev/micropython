@@ -1,4 +1,6 @@
-include ../py/mkenv.mk
+BUILD ?= build
+
+include ../../py/mkenv.mk
 
 CROSS = 1
 
@@ -19,15 +21,18 @@ PINS_PATH_K64F = TARGET_Freescale/TARGET_MCUXpresso_MCUS/TARGET_MCU_K64F/TARGET_
 PINS_PATH_LPC1768 = TARGET_NXP/TARGET_LPC176X/TARGET_MBED_LPC1768
 PINS_PATH_NUCLEO_F401RE = TARGET_STM/TARGET_STM32F4/TARGET_STM32F401xE/TARGET_NUCLEO_F401RE
 
-PYSRC = $(wildcard ../py/*.c)
-EXTMODSRC = ../extmod/machine_mem.c
-MPLIBSRC = ../lib/utils/pyexec.c ../lib/mp-readline/readline.c
+PYSRC = $(wildcard $(PY_SRC)/*.c)
+EXTMODSRC = $(TOP)/extmod/machine_mem.c
+MPLIBSRC = $(addprefix $(TOP)/lib/,\
+	utils/pyexec.c \
+	mp-readline/readline.c \
+	)
 PORTSRC = modmachine.c modmbed.c modnet.c modpins.c modk64f.c \
 	 mphelp.c mreg.c mpc.c
 REPLSRC = main.cpp
 
 # Files containing MP_QSTR_ to be processed by makeqstrcond
-QSTRSRC =	../py/qstrdefs.h \
+QSTRSRC =	$(PY_SRC)/qstrdefs.h \
 		$(PYSRC) \
 		$(EXTMODSRC) \
 		$(MPLIBSRC) \
@@ -42,7 +47,7 @@ mbedpins.h:	makembedpins.py
 	python makembedpins.py -d $(foreach t,$(PINS_TARGETS),$(t):$(MBED_REPO)/targets/$(PINS_PATH_$(t))/PinNames.h) > $@
 
 qstrdefscond.h:	makeqstrcond.py $(QSTRSRC)
-	python makeqstrcond.py $(QSTRSRC) > $@
+	PYTHONPATH=$(PY_SRC) python makeqstrcond.py $(QSTRSRC) > $@
 
 modmbed.c modmbed_i.h modmbed_i.cpp:	genmod.py mbed.yaml
 	python genmod.py -a mbed.yaml
@@ -54,4 +59,4 @@ modnet.c modnet_i.h modnet_i.cpp:	genmod.py net.yaml
 QSTR_DEFS = qstrdefsport.h
 
 # include py core make definitions
-include ../py/py.mk
+include $(TOP)/py/py.mk
