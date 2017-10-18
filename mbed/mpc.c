@@ -121,8 +121,9 @@ mpc_populate(mp_obj_t ns) {
         mp_obj_t obj = mp_const_none;
         switch (def->type) {
         case DEFTYPE_FUNC: {
-            mp_obj_fun_builtin_t *fobj = m_new_obj(mp_obj_fun_builtin_t);
-            fobj->base.type = &mp_type_fun_builtin;
+            mp_obj_fun_builtin_var_t *fobj =
+                m_new_obj(mp_obj_fun_builtin_var_t);
+            fobj->base.type = &mp_type_fun_builtin_var;
             fobj->is_kw = false;
             fobj->n_args_min = 0;
             fobj->n_args_max = MP_OBJ_FUN_ARGS_MAX;

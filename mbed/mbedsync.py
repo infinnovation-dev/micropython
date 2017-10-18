@@ -57,8 +57,6 @@ extmod_files = ('machine_mem.h',
 
 lib_files = ('utils/pyexec.h',
              'utils/pyexec.c',
-             'utils/pyhelp.h',
-             'utils/pyhelp.c',
              'utils/printf.c',
              'mp-readline/readline.h',
              'mp-readline/readline.c')

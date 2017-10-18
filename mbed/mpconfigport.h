@@ -63,6 +63,9 @@ extern int mp__printf(const char *, ...);
 #define MICROPY_PY_BUILTINS_ENUMERATE (0)
 #define MICROPY_PY_BUILTINS_FILTER  (0)
 #define MICROPY_PY_BUILTINS_FROZENSET (0)
+#define MICROPY_PY_BUILTINS_HELP    (MBED_CONF_MICROPYTHON_WITH_HELP)
+extern const char mbed_mpy_help_text[];
+#define MICROPY_PY_BUILTINS_HELP_TEXT mbed_mpy_help_text
 #define MICROPY_PY_BUILTINS_REVERSED (0)
 #define MICROPY_PY_BUILTINS_SET     (0)
 #define MICROPY_PY_BUILTINS_SLICE   (0)
@@ -163,7 +166,7 @@ typedef long mp_off_t;
 
 // extra built in names to add to the global namespace
 #if MBED_CONF_MICROPYTHON_WITH_HELP
-extern const struct _mp_obj_fun_builtin_t mp_builtin_help_obj;
+extern const struct _mp_obj_fun_builtin_var_t mp_builtin_help_obj;
 #define MICROPY_MAYBE_BUILTIN_HELP \
     { MP_OBJ_NEW_QSTR(MP_QSTR_help), (mp_obj_t)&mp_builtin_help_obj },
 #else

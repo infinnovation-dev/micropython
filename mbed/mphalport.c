@@ -92,3 +92,8 @@ void gc_collect(void) {}
 #if ! MICROPY_ENABLE_GC
 void gc_dump_info(void) {}
 #endif
+
+void nlr_jump_fail(void *val) {
+    printf("nlr_jump_fail\n");
+    while (1);
+}

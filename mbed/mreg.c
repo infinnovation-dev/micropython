@@ -281,7 +281,7 @@ STATIC void mreg_array_print(const mp_print_t *print, mp_obj_t self_in, mp_print
     mreg_array_print_helper(print, self->ptr, self->desc, kind);
 }
 
-STATIC mp_obj_t mreg_array_unary_op(mp_uint_t op, mp_obj_t self_in) {
+STATIC mp_obj_t mreg_array_unary_op(mp_unary_op_t op, mp_obj_t self_in) {
     mreg_array_obj_t *self = MP_OBJ_TO_PTR(self_in);
     switch (op) {
     case MP_UNARY_OP_LEN:

@@ -24,10 +24,7 @@
 #include "py/runtime.h"
 #if MBED_CONF_MICROPYTHON_WITH_HELP
 
-#include <stdio.h>
-#include "lib/utils/pyhelp.h"
-
-STATIC const char help_text[] =
+const char mbed_mpy_help_text[] =
     "Welcome to the (unofficial) mbed port of MicroPython!\n"
     "For online help please visit http://micropython.org/help/.\n"
     "For further help on a specific object, type help(obj)\n"
@@ -75,18 +72,5 @@ STATIC const char help_text[] =
 #endif
     "  pins    -- board-specific and generic named pins e.g. USBTX\n"
     ;
-
-STATIC mp_obj_t mbed_help(size_t n_args, const mp_obj_t *args) {
-    if (n_args == 0) {
-        // print a general help message
-        printf("%s", help_text);
-    }
-    else {
-        // try to print something sensible about the given object
-        pyhelp_print_obj(args[0]);
-    }
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_builtin_help_obj, 0, 1, mbed_help);
 
 #endif // MBED_CONF_MICROPYTHON_WITH_HELP
