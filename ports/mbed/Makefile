@@ -27,7 +27,7 @@ MPLIBSRC = $(addprefix $(TOP)/lib/,\
 	utils/pyexec.c \
 	mp-readline/readline.c \
 	)
-PORTSRC = modmachine.c modmbed.c modnet.c modpins.c modk64f.c \
+PORTSRC = modmachine.c moduos.c modmbed.c modnet.c modpins.c modk64f.c \
 	 mphelp.c mreg.c mpc.c
 REPLSRC = main.cpp
 

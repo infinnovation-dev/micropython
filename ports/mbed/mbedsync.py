@@ -62,6 +62,7 @@ lib_files = ('utils/pyexec.h',
              'mp-readline/readline.c')
 
 mbed_lib_files = ('modmachine.c',
+                  'moduos.c',
                   'modmbed.c',
                   'modmbed_i.cpp',
                   'modmbed_i.h',

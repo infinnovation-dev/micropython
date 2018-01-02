@@ -83,6 +83,7 @@ extern const char mbed_mpy_help_text[];
 #define MICROPY_PY_SYS              (1)
 // Build "machine" module (port-specific)
 #define MICROPY_PY_MACHINE          (1)
+#define MICROPY_PY_UOS              (1)
 
 // Build "mbed" module
 #define MICROPY_PY_MBED             (1)
@@ -211,6 +212,14 @@ extern const struct _mp_obj_module_t mp_module_machine;
 #define MICROPY_MAYBE_MODULE_MACHINE
 #endif
 
+#if MICROPY_PY_UOS
+extern const struct _mp_obj_module_t mp_module_uos;
+#define MICROPY_MAYBE_MODULE_UOS \
+    { MP_ROM_QSTR(MP_QSTR_uos), MP_ROM_PTR(&mp_module_uos) },
+#else
+#define MICROPY_MAYBE_MODULE_UOS
+#endif
+
 #if MBED_CONF_MICROPYTHON_WITH_PINS
 extern const struct _mp_obj_module_t mp_module_pins;
 #define MICROPY_MAYBE_MODULE_PINS \
@@ -231,6 +240,7 @@ extern const struct _mp_obj_module_t mp_module_k64f;
     MICROPY_MAYBE_MODULE_MBED              \
     MICROPY_MAYBE_MODULE_NET               \
     MICROPY_MAYBE_MODULE_MACHINE           \
+    MICROPY_MAYBE_MODULE_UOS               \
     MICROPY_MAYBE_MODULE_PINS              \
     MICROPY_MAYBE_MODULE_K64F              \
 
